@@ -77,7 +77,7 @@
 BLE_NUS_C_DEF(m_ble_nus_c);                                             /**< BLE Nordic UART Service (NUS) client instance. */
 NRF_BLE_GATT_DEF(m_gatt);                                               /**< GATT module instance. */
 BLE_DB_DISCOVERY_DEF(m_db_disc);                                        /**< Database discovery module instance. */
-NRF_BLE_SCAN_DEF(m_scan);                                               /**< Scanning Module instance. */
+//NRF_BLE_SCAN_DEF(m_scan);                                               /**< Scanning Module instance. */
 NRF_BLE_GQ_DEF(m_ble_gatt_queue,                                        /**< BLE GATT Queue instance. */
                NRF_SDH_BLE_CENTRAL_LINK_COUNT,
                NRF_BLE_GQ_QUEUE_SIZE);
@@ -90,6 +90,33 @@ static ble_uuid_t const m_nus_uuid =
     .uuid = BLE_UUID_NUS_SERVICE,
     .type = NUS_SERVICE_UUID_TYPE
 };
+
+
+/* Scanner configuration */
+#define APP_SCAN_SCAN_INTERVAL            (0x20)     /**< Scanning interval. Determines the scan interval in units of 0.625 millisecond. */
+#define APP_SCAN_SCAN_WINDOW              (0x20)      /**< Scanning window. Determines the scanning window in units of 0.625 millisecond. */
+
+#define APP_SCAN_DURATION           100//BLE_GAP_SCAN_TIMEOUT_UNLIMITED  /**< Duration of the scanning in units of 10 milliseconds. */
+#define APP_SCAN_ACTIVE_DISABLED    0                               /**< Only passive scanning will be processed, no scan request send. */
+#define APP_SCAN_ACTIVE_ENABLED     1
+#define APP_SCAN_EXTENDED_ENABLED   1
+#define APP_SCAN_EXTENDED_DISABLED  0
+
+
+/**@brief Scan data structure.
+ */
+typedef struct
+{
+    bool                  initialized;
+    ble_gap_scan_params_t scan_params;              /**< GAP scanning parameters. */
+    uint8_t scan_buffer_data[BLE_GAP_SCAN_BUFFER_EXTENDED_MIN];  /**< Buffer where advertising reports will be stored by the SoftDevice. */
+    ble_data_t scan_buffer;                         /**< Structure-stored pointer to the buffer where advertising reports will be stored by the SoftDevice. */
+} dm_ble_scan_t;
+
+static dm_ble_scan_t     m_scann_ctx;                                        /**< Scanning context data. */
+
+
+static char const m_target_periph_name[] = "Filter_UART";      /**< If you want to connect to a peripheral using a given advertising name, type its name here. */
 
 
 /**@brief Function for handling asserts in the SoftDevice.
@@ -119,81 +146,136 @@ static void nus_error_handler(uint32_t nrf_error)
 }
 
 
-/**@brief Function to start scanning. */
-static void scan_start(void)
+ret_code_t scan_init(dm_ble_scan_t * const p_scan_ctx)
 {
-    ret_code_t ret;
+    VERIFY_PARAM_NOT_NULL(p_scan_ctx);
 
-    ret = nrf_ble_scan_start(&m_scan);
-    APP_ERROR_CHECK(ret);
+    /* We expect better performance when using extended advertising/scanning. However, for simplicity this example uses legacy scanning/advertising. */
+#ifdef DM_USE_EXTENDED_SCANNING_ADVERTISING
+    p_scan_ctx->scan_params.extended      = APP_SCAN_EXTENDED_ENABLED;
+#else
+    p_scan_ctx->scan_params.extended      = APP_SCAN_EXTENDED_DISABLED;
+#endif
+    p_scan_ctx->scan_params.active        = APP_SCAN_ACTIVE_DISABLED;
+    p_scan_ctx->scan_params.interval      = APP_SCAN_SCAN_INTERVAL;
+    p_scan_ctx->scan_params.window        = APP_SCAN_SCAN_WINDOW;
+    p_scan_ctx->scan_params.filter_policy = BLE_GAP_SCAN_FP_ACCEPT_ALL;
+    p_scan_ctx->scan_params.timeout       = APP_SCAN_DURATION;
+    p_scan_ctx->scan_params.scan_phys     = BLE_GAP_PHY_1MBPS;
+    // Assign a buffer where the advertising reports are to be stored by the SoftDevice.
+    p_scan_ctx->scan_buffer.p_data = p_scan_ctx->scan_buffer_data;
+    p_scan_ctx->scan_buffer.len    = sizeof(p_scan_ctx->scan_buffer_data);
 
-    ret = bsp_indication_set(BSP_INDICATE_SCANNING);
-    APP_ERROR_CHECK(ret);
+    return NRF_SUCCESS;
 }
 
-
-/**@brief Function for handling Scanning Module events.
- */
-static void scan_evt_handler(scan_evt_t const * p_scan_evt)
+ret_code_t scan_start(dm_ble_scan_t const * const p_scan_ctx)
 {
+    VERIFY_PARAM_NOT_NULL(p_scan_ctx);
+
     ret_code_t err_code;
 
-    switch(p_scan_evt->scan_evt_id)
+    // Start the scanning.
+    err_code = sd_ble_gap_scan_start(&p_scan_ctx->scan_params, &p_scan_ctx->scan_buffer);
+
+    // It is okay to ignore this error, because the scan stopped earlier.
+    if ((err_code != NRF_ERROR_INVALID_STATE) && (err_code != NRF_SUCCESS))
     {
-         case NRF_BLE_SCAN_EVT_CONNECTING_ERROR:
-         {
-              err_code = p_scan_evt->params.connecting_err.err_code;
-              APP_ERROR_CHECK(err_code);
-         } break;
-
-         case NRF_BLE_SCAN_EVT_CONNECTED:
-         {
-              ble_gap_evt_connected_t const * p_connected =
-                               p_scan_evt->params.connected.p_connected;
-             // Scan is automatically stopped by the connection.
-             NRF_LOG_INFO("Connecting to target %02x%02x%02x%02x%02x%02x",
-                      p_connected->peer_addr.addr[0],
-                      p_connected->peer_addr.addr[1],
-                      p_connected->peer_addr.addr[2],
-                      p_connected->peer_addr.addr[3],
-                      p_connected->peer_addr.addr[4],
-                      p_connected->peer_addr.addr[5]
-                      );
-         } break;
-
-         case NRF_BLE_SCAN_EVT_SCAN_TIMEOUT:
-         {
-             NRF_LOG_INFO("Scan timed out.");
-             scan_start();
-         } break;
-
-         default:
-             break;
+        NRF_LOG_ERROR("sd_ble_gap_scan_start returned 0x%x", err_code);
+        return (err_code);
     }
+    NRF_LOG_INFO("Starting scan.");
+
+    return NRF_SUCCESS;
 }
+
+/****************************************************************/
+static void Get_Connect_MAC_Address(ble_gap_addr_t *gap_address)
+{
+        NRF_LOG_INFO("Peer Address is %02X:%02X:%02X:%02X:%02X:%02X",
+                     gap_address->addr[5],
+                     gap_address->addr[4],
+                     gap_address->addr[3],
+                     gap_address->addr[2],
+                     gap_address->addr[1],
+                     gap_address->addr[0]);
+}
+
+
+///**@brief Function to start scanning. */
+//static void scan_start(void)
+//{
+//    ret_code_t ret;
+
+//    ret = nrf_ble_scan_start(&m_scan);
+//    APP_ERROR_CHECK(ret);
+
+//    ret = bsp_indication_set(BSP_INDICATE_SCANNING);
+//    APP_ERROR_CHECK(ret);
+//}
+
+
+///**@brief Function for handling Scanning Module events.
+// */
+//static void scan_evt_handler(scan_evt_t const * p_scan_evt)
+//{
+//    ret_code_t err_code;
+
+//    switch(p_scan_evt->scan_evt_id)
+//    {
+//         case NRF_BLE_SCAN_EVT_CONNECTING_ERROR:
+//         {
+//              err_code = p_scan_evt->params.connecting_err.err_code;
+//              APP_ERROR_CHECK(err_code);
+//         } break;
+//         case NRF_BLE_SCAN_EVT_CONNECTED:
+//         {
+//              ble_gap_evt_connected_t const * p_connected =
+//                               p_scan_evt->params.connected.p_connected;
+//             // Scan is automatically stopped by the connection.
+//             NRF_LOG_INFO("Connecting to target %02x%02x%02x%02x%02x%02x",
+//                      p_connected->peer_addr.addr[0],
+//                      p_connected->peer_addr.addr[1],
+//                      p_connected->peer_addr.addr[2],
+//                      p_connected->peer_addr.addr[3],
+//                      p_connected->peer_addr.addr[4],
+//                      p_connected->peer_addr.addr[5]
+//                      );
+//         } break;
+
+//         case NRF_BLE_SCAN_EVT_SCAN_TIMEOUT:
+//         {
+//             NRF_LOG_INFO("Scan timed out.");
+//             scan_start();
+//         } break;
+
+//         default:
+//             break;
+//    }
+//}
 
 
 /**@brief Function for initializing the scanning and setting the filters.
  */
-static void scan_init(void)
-{
-    ret_code_t          err_code;
-    nrf_ble_scan_init_t init_scan;
+//static void scan_init(void)
+//{
+//    ret_code_t          err_code;
+//    nrf_ble_scan_init_t init_scan;
 
-    memset(&init_scan, 0, sizeof(init_scan));
+//    memset(&init_scan, 0, sizeof(init_scan));
 
-    init_scan.connect_if_match = true;
-    init_scan.conn_cfg_tag     = APP_BLE_CONN_CFG_TAG;
+//    init_scan.connect_if_match = true;
+//    init_scan.conn_cfg_tag     = APP_BLE_CONN_CFG_TAG;
 
-    err_code = nrf_ble_scan_init(&m_scan, &init_scan, scan_evt_handler);
-    APP_ERROR_CHECK(err_code);
+//    err_code = nrf_ble_scan_init(&m_scan, &init_scan, scan_evt_handler);
+//    APP_ERROR_CHECK(err_code);
 
-    err_code = nrf_ble_scan_filter_set(&m_scan, SCAN_UUID_FILTER, &m_nus_uuid);
-    APP_ERROR_CHECK(err_code);
+//    err_code = nrf_ble_scan_filter_set(&m_scan, SCAN_UUID_FILTER, &m_nus_uuid);
+//    APP_ERROR_CHECK(err_code);
 
-    err_code = nrf_ble_scan_filters_enable(&m_scan, NRF_BLE_SCAN_UUID_FILTER, false);
-    APP_ERROR_CHECK(err_code);
-}
+//    err_code = nrf_ble_scan_filters_enable(&m_scan, NRF_BLE_SCAN_UUID_FILTER, false);
+//    APP_ERROR_CHECK(err_code);
+//}
 
 
 /**@brief Function for handling database discovery events.
@@ -341,7 +423,7 @@ static void ble_nus_c_evt_handler(ble_nus_c_t * p_ble_nus_c, ble_nus_c_evt_t con
 
         case BLE_NUS_C_EVT_DISCONNECTED:
             NRF_LOG_INFO("Disconnected.");
-            scan_start();
+            scan_start(&m_scann_ctx);
             break;
     }
 }
@@ -457,6 +539,58 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
             APP_ERROR_CHECK(err_code);
             break;
 
+
+        case BLE_GAP_EVT_ADV_REPORT:
+            {
+                  dm_ble_scan_t* p_scan_ctx = p_context;
+                  ble_gap_evt_adv_report_t const * p_adv_report = (ble_gap_evt_adv_report_t *)&p_ble_evt->evt.gap_evt.params.adv_report;
+
+                  uint16_t data_offset = 0;
+                  //uint16_t parsed_name_len =
+                  //    ble_advdata_search(p_ble_evt->evt.gap_evt.params.adv_report.data.p_data,
+                  //                       p_ble_evt->evt.gap_evt.params.adv_report.data.len,
+                  //                       &data_offset,
+                  //                       BLE_GAP_AD_TYPE_COMPLETE_LOCAL_NAME);
+
+                  //bool ble_advdata_name_find(uint8_t const * p_encoded_data,
+                  //                           uint16_t        data_len,
+                  //                           char    const * p_target_name)
+
+                  //if (parsed_name_len != 0)
+                  if (ble_advdata_name_find(p_ble_evt->evt.gap_evt.params.adv_report.data.p_data,
+                                            p_ble_evt->evt.gap_evt.params.adv_report.data.len,
+                                            m_target_periph_name) == true)
+                  {
+                      data_offset = 0;
+                      uint8_t manuf_data_len =
+                          ble_advdata_search(p_ble_evt->evt.gap_evt.params.adv_report.data.p_data,
+                                              p_ble_evt->evt.gap_evt.params.adv_report.data.len,
+                                              &data_offset,
+                                              BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA);
+
+                      NRF_LOG_INFO("RSSI = %d",p_adv_report->rssi);
+                      Get_Connect_MAC_Address((ble_gap_addr_t *)&p_gap_evt->params.adv_report.peer_addr);
+                      //if (manuf_data_len == 2 + sizeof(dm_event_data_t))
+                      //{
+                      //    uint16_t company_identifier = uint16_decode(&p_ble_evt->evt.gap_evt.params.adv_report.data.p_data[data_offset]);
+                      //    if (company_identifier == 0x0059 && privacy_peer_supports_dm(&p_ble_evt->evt.gap_evt.params.adv_report.peer_addr)) // Adress was resolved
+                      //    {
+                      //        dm_event_data_t* event_data = (dm_event_data_t*) &p_ble_evt->evt.gap_evt.params.adv_report.data.p_data[data_offset+2];
+                      //        dm_peer_node_t * peer = NULL;
+                      //        get_or_add_peer(&p_ble_evt->evt.gap_evt.params.adv_report.peer_addr, &peer);
+                      //        if(peer != NULL)
+                      //        {
+                      //            dm_received_adv_report(&p_ble_evt->evt.gap_evt.params.adv_report.peer_addr, event_data->access_addr);
+                      //        }
+                      //    }
+                      //}
+                  }
+                  // Resume the scanning.
+                  ret_code_t err_code = sd_ble_gap_scan_start(NULL, &p_scan_ctx->scan_buffer);
+                  APP_ERROR_CHECK(err_code);
+            }
+            break;
+
         default:
             break;
     }
@@ -485,7 +619,23 @@ static void ble_stack_init(void)
     APP_ERROR_CHECK(err_code);
 
     // Register a handler for BLE events.
-    NRF_SDH_BLE_OBSERVER(m_ble_observer, APP_BLE_OBSERVER_PRIO, ble_evt_handler, NULL);
+    // NRF_SDH_BLE_OBSERVER(m_ble_observer, APP_BLE_OBSERVER_PRIO, ble_evt_handler, NULL);
+    NRF_SDH_BLE_OBSERVER(m_ble_observer, APP_BLE_OBSERVER_PRIO, ble_evt_handler, &m_scann_ctx);
+}
+
+/**@brief Function for the GAP initialization.
+ *
+ * @details This function will set up all the necessary GAP (Generic Access Profile) parameters of
+ *          the device. It also sets the permissions and appearance.
+ */
+static void gap_params_init(void)
+{
+        uint32_t err_code;
+        ble_gap_addr_t ble_address = {.addr_type = BLE_GAP_ADDR_TYPE_RANDOM_STATIC,
+                                      .addr_id_peer = 0,
+                                      .addr = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}};
+        err_code = sd_ble_gap_addr_set(&ble_address);
+        APP_ERROR_CHECK(err_code);
 }
 
 
@@ -666,12 +816,11 @@ int main(void)
     ble_stack_init();
     gatt_init();
     nus_c_init();
-    scan_init();
+    scan_init(&m_scann_ctx);
 
     // Start execution.
-    printf("BLE UART central example started.\r\n");
     NRF_LOG_INFO("BLE UART central example started.");
-    scan_start();
+    scan_start(&m_scann_ctx);
 
     // Enter main loop.
     for (;;)
