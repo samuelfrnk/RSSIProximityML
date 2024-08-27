@@ -157,8 +157,8 @@ static ble_gap_adv_data_t m_adv_data =
 
 
 /* Scanner configuration */
-#define APP_SCAN_SCAN_INTERVAL            (0x100)     /**< Scanning interval. Determines the scan interval in units of 0.625 millisecond. */
-#define APP_SCAN_SCAN_WINDOW              (0x20)      /**< Scanning window. Determines the scanning window in units of 0.625 millisecond. */
+#define APP_SCAN_SCAN_INTERVAL            (0xA0)     /**< Scanning interval. Determines the scan interval in units of 0.625 millisecond. */
+#define APP_SCAN_SCAN_WINDOW              (0x50)      /**< Scanning window. Determines the scanning window in units of 0.625 millisecond. */
 
 #define APP_SCAN_DURATION           BLE_GAP_SCAN_TIMEOUT_UNLIMITED  /**< Duration of the scanning in units of 10 milliseconds. */
 #define APP_SCAN_ACTIVE_DISABLED    0                               /**< Only passive scanning will be processed, no scan request send. */
@@ -589,7 +589,7 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
                         {
                                   //NRF_LOG_INFO("add whitelist: Addr cnt = %d, is_match = %d", m_addr_cnt, is_match);
                                   memcpy(&m_whitelist_addrs[m_addr_cnt], (ble_gap_addr_t *)&p_gap_evt->params.scan_req_report.peer_addr, sizeof(ble_gap_addr_t));
-                                  m_addr_cnt++;                        
+                                  m_addr_cnt++;
                         }
 
                         //memcpy(&whitelist_addrs, (ble_gap_addr_t *)&p_gap_evt->params.scan_req_report.peer_addr, sizeof(ble_gap_addr_t));
@@ -606,53 +606,67 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
         }
         break;
 
-        case BLE_GAP_EVT_ADV_REPORT:
+case BLE_GAP_EVT_ADV_REPORT:
+{
+    //NRF_LOG_INFO("BLE_GAP_EVT_ADV_REPORT event received");
+
+    ble_gap_evt_adv_report_t const *p_adv_report = &p_ble_evt->evt.gap_evt.params.adv_report;
+    //NRF_LOG_INFO("Received advertisement data with length: %d", p_adv_report->data.len);
+    //NRF_LOG_HEXDUMP_INFO(p_adv_report->data.p_data, p_adv_report->data.len);
+
+    // Filter for Apple Manufacturer Specific Data
+    uint16_t data_offset = 0;
+    uint8_t manuf_data_len = ble_advdata_search(p_adv_report->data.p_data,
+                                                p_adv_report->data.len,
+                                                &data_offset,
+                                                BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA);
+
+    if (manuf_data_len >= 4) // Minimum length for manufacturer data is 2 (Company Identifier)
+    {
+        // Check if the manufacturer is Apple (0x004C)
+        uint16_t company_identifier = uint16_decode(&p_adv_report->data.p_data[data_offset]);
+        if (company_identifier == 0x004C)
+        {
+            if (p_adv_report->data.p_data[data_offset + 2] == 0x12)
             {
-                  ble_gap_evt_adv_report_t const * p_adv_report = (ble_gap_evt_adv_report_t *)&p_ble_evt->evt.gap_evt.params.adv_report;
-                  uint16_t data_offset = 0;
-                  dm_ble_scan_t* p_scan_ctx = p_context;
 
 
-                  if (ble_advdata_name_find(p_ble_evt->evt.gap_evt.params.adv_report.data.p_data,
-                                            p_ble_evt->evt.gap_evt.params.adv_report.data.len,
-                                            m_target_periph_name) == true)
-                  {
-                      data_offset = 0;
-                      uint8_t manuf_data_len =
-                          ble_advdata_search(p_ble_evt->evt.gap_evt.params.adv_report.data.p_data,
-                                              p_ble_evt->evt.gap_evt.params.adv_report.data.len,
-                                              &data_offset,
-                                              BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA);
-                      NRF_LOG_INFO("BLE_GAP_EVT_ADV_REPORT");
-                      Get_Connect_MAC_Address((ble_gap_addr_t *)&p_gap_evt->params.adv_report.peer_addr);
-                      NRF_LOG_INFO("RSSI = %d",p_adv_report->rssi);
-                      Get_Connect_MAC_Address((ble_gap_addr_t *)&p_gap_evt->params.adv_report.peer_addr);
-                      //if (manuf_data_len == 2 + sizeof(dm_event_data_t))
-                      //{
-                      //    uint16_t company_identifier = uint16_decode(&p_ble_evt->evt.gap_evt.params.adv_report.data.p_data[data_offset]);
-                      //    if (company_identifier == 0x0059 && privacy_peer_supports_dm(&p_ble_evt->evt.gap_evt.params.adv_report.peer_addr)) // Adress was resolved
-                      //    {
-                      //        dm_event_data_t* event_data = (dm_event_data_t*) &p_ble_evt->evt.gap_evt.params.adv_report.data.p_data[data_offset+2];
-                      //        dm_peer_node_t * peer = NULL;
-                      //        get_or_add_peer(&p_ble_evt->evt.gap_evt.params.adv_report.peer_addr, &peer);
-                      //        if(peer != NULL)
-                      //        {
-                      //            dm_received_adv_report(&p_ble_evt->evt.gap_evt.params.adv_report.peer_addr, event_data->access_addr);
-                      //        }
-                      //    }
-                      //}
-                  }
-                  // Resume the scanning.
-                  ret_code_t err_code = sd_ble_gap_scan_start(NULL, &m_scann_ctx.scan_buffer);
-                  //ret_code_t err_code = sd_ble_gap_scan_start(NULL, &p_scan_ctx->scan_buffer);
-                  // It is okay to ignore this error, because the scan stopped earlier.
-                  if ((err_code != NRF_ERROR_INVALID_STATE) && (err_code != NRF_SUCCESS))
-                  {
-                      NRF_LOG_ERROR("sd_ble_gap_scan_start returned 0x%x", err_code);
-                      return (err_code);
-                  }
+            uint8_t status_byte = p_adv_report->data.p_data[data_offset + 4];
+            uint8_t filtered_bits = status_byte & 0x30;
+
+
+              if (filtered_bits == 0x10)
+              {
+                NRF_LOG_INFO("AirTag Identified");
+
+
+                //NRF_LOG_INFO("Full Advertisement Packet:");
+                //NRF_LOG_HEXDUMP_INFO(p_adv_report->data.p_data, p_adv_report->data.len);
+
+
+                //NRF_LOG_INFO("Manu spec data:");
+                //NRF_LOG_HEXDUMP_INFO(&p_adv_report->data.p_data[data_offset], manuf_data_len);
+
+                // Log the MAC address
+                Get_Connect_MAC_Address((ble_gap_addr_t *)&p_adv_report->peer_addr);
+
+                // Log the RSSI value
+                NRF_LOG_INFO("RSSI: %d", p_adv_report->rssi);
+
+              }
             }
-            break;
+        }
+    }
+
+    // Resume the scanning.
+    ret_code_t err_code = sd_ble_gap_scan_start(NULL, &m_scann_ctx.scan_buffer);
+    if ((err_code != NRF_ERROR_INVALID_STATE) && (err_code != NRF_SUCCESS))
+    {
+        NRF_LOG_ERROR("sd_ble_gap_scan_start returned 0x%x", err_code);
+    }
+}
+break;
+
 
 
         case BLE_GAP_EVT_PHY_UPDATE_REQUEST:
