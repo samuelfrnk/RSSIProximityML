@@ -52,3 +52,4 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+ble_app_uart_adv_scan/.DS_Store
