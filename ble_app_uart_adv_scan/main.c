@@ -68,6 +68,7 @@
 #include "app_util_platform.h"
 #include "bsp_btn_ble.h"
 #include "nrf_pwr_mgmt.h"
+#include "app_timer.h"
 
 #if defined (UART_PRESENT)
 #include "nrf_uart.h"
@@ -119,7 +120,7 @@
 
 #define BUTTON_DETECTION_DELAY APP_TIMER_TICKS(50) /**< Delay from a GPIOTE event until a button is reported as pushed (in number of timer ticks). */
 
-
+APP_TIMER_DEF(m_timer_id);
 BLE_NUS_DEF(m_nus, NRF_SDH_BLE_TOTAL_LINK_COUNT);                                   /**< BLE NUS service instance. */
 NRF_BLE_GATT_DEF(m_gatt);                                                           /**< GATT module instance. */
 NRF_BLE_QWR_DEF(m_qwr);                                                             /**< Context for the Queued Write module.*/
@@ -137,8 +138,12 @@ static bool m_advertising_is_running = false;
 static bool m_advertising_filter_is_running = false;
 
 static uint8_t m_enc_advdata[BLE_GAP_ADV_SET_DATA_SIZE_MAX];                    /**< Buffer for storing an encoded advertising set. */
-static uint8_t m_enc_scan_response_data[BLE_GAP_ADV_SET_DATA_SIZE_MAX];  
-static bool m_logging_is_running = false;       
+static uint8_t m_enc_scan_response_data[BLE_GAP_ADV_SET_DATA_SIZE_MAX];
+static bool m_logging_is_running = false;
+static uint32_t seconds_since_start = 0;
+static bool timer_started = false;
+
+
 
 /**@brief Struct that contains pointers to the encoded advertising data. */
 static ble_gap_adv_data_t m_adv_data =
@@ -233,6 +238,18 @@ static void Get_Connect_MAC_Address(ble_gap_addr_t *gap_address)
 static uint8_t nrf_ble_whitelist_cnt(void)
 {
         return m_addr_cnt;
+}
+
+static void time_update_handler(void *p_context) {
+    seconds_since_start++;
+}
+
+void get_timestamp(char *buffer, size_t size) {
+    uint32_t total_seconds = seconds_since_start; // Use the global counter
+    uint32_t hours = (total_seconds / 3600) % 24;
+    uint32_t minutes = (total_seconds / 60) % 60;
+    uint32_t seconds = total_seconds % 60;
+    sprintf(buffer, "%02lu:%02lu:%02lu", hours, minutes, seconds);
 }
 
 static uint32_t nrf_adv_add_whitelist(ble_gap_addr_t *addr, uint8_t * whitelist_count)
@@ -351,8 +368,16 @@ void assert_nrf_callback(uint16_t line_num, const uint8_t * p_file_name)
  */
 static void timers_init(void)
 {
-        ret_code_t err_code = app_timer_init();
-        APP_ERROR_CHECK(err_code);
+    ret_code_t err_code = app_timer_init();
+    APP_ERROR_CHECK(err_code);
+
+    // Create the timer
+    err_code = app_timer_create(&m_timer_id, APP_TIMER_MODE_REPEATED, time_update_handler);
+    APP_ERROR_CHECK(err_code);
+
+    // Start the timer with a 1-second interval
+    err_code = app_timer_start(m_timer_id, APP_TIMER_TICKS(1000), NULL);
+    APP_ERROR_CHECK(err_code);
 }
 
 /**@brief Function for the GAP initialization.
@@ -607,69 +632,76 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
         }
         break;
 
-case BLE_GAP_EVT_ADV_REPORT:
-{
-    //NRF_LOG_INFO("BLE_GAP_EVT_ADV_REPORT event received");
+  case BLE_GAP_EVT_ADV_REPORT:
+  {
+      //NRF_LOG_INFO("BLE_GAP_EVT_ADV_REPORT event received");
 
-    ble_gap_evt_adv_report_t const *p_adv_report = &p_ble_evt->evt.gap_evt.params.adv_report;
-    //NRF_LOG_INFO("Received advertisement data with length: %d", p_adv_report->data.len);
-    //NRF_LOG_HEXDUMP_INFO(p_adv_report->data.p_data, p_adv_report->data.len);
+      ble_gap_evt_adv_report_t const *p_adv_report = &p_ble_evt->evt.gap_evt.params.adv_report;
+      //NRF_LOG_INFO("Received advertisement data with length: %d", p_adv_report->data.len);
+      //NRF_LOG_HEXDUMP_INFO(p_adv_report->data.p_data, p_adv_report->data.len);
 
-    if (m_logging_is_running)
-    {
-    // Filter for Apple Manufacturer Specific Data
-    uint16_t data_offset = 0;
-    uint8_t manuf_data_len = ble_advdata_search(p_adv_report->data.p_data,
-                                                p_adv_report->data.len,
-                                                &data_offset,
-                                                BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA);
+      if (m_logging_is_running)
+      {
+      // Filter for Apple Manufacturer Specific Data
+      uint16_t data_offset = 0;
+      uint8_t manuf_data_len = ble_advdata_search(p_adv_report->data.p_data,
+                                                  p_adv_report->data.len,
+                                                  &data_offset,
+                                                  BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA);
 
-    if (manuf_data_len >= 4) // Minimum length for manufacturer data is 2 (Company Identifier)
-    {
-        // Check if the manufacturer is Apple (0x004C)
-        uint16_t company_identifier = uint16_decode(&p_adv_report->data.p_data[data_offset]);
-        if (company_identifier == 0x004C)
-        {
-            if (p_adv_report->data.p_data[data_offset + 2] == 0x12)
-            {
-
-
-            uint8_t status_byte = p_adv_report->data.p_data[data_offset + 4];
-            uint8_t filtered_bits = status_byte & 0x30;
-
-
-              if (filtered_bits == 0x10)
+      if (manuf_data_len >= 4) // Minimum length for manufacturer data is 2 (Company Identifier)
+      {
+          // Check if the manufacturer is Apple (0x004C)
+          uint16_t company_identifier = uint16_decode(&p_adv_report->data.p_data[data_offset]);
+          if (company_identifier == 0x004C)
+          {
+              if (p_adv_report->data.p_data[data_offset + 2] == 0x12)
               {
-                NRF_LOG_INFO("AirTag Identified");
 
 
-                //NRF_LOG_INFO("Full Advertisement Packet:");
-                //NRF_LOG_HEXDUMP_INFO(p_adv_report->data.p_data, p_adv_report->data.len);
+              uint8_t status_byte = p_adv_report->data.p_data[data_offset + 4];
+              uint8_t filtered_bits = status_byte & 0x30;
 
 
-                //NRF_LOG_INFO("Manu spec data:");
-                //NRF_LOG_HEXDUMP_INFO(&p_adv_report->data.p_data[data_offset], manuf_data_len);
+                if (filtered_bits == 0x10)
+                {
+                  NRF_LOG_INFO("AirTag Identified");
 
-                // Log the MAC address
-                Get_Connect_MAC_Address((ble_gap_addr_t *)&p_adv_report->peer_addr);
 
-                // Log the RSSI value
-                NRF_LOG_INFO("RSSI: %d", p_adv_report->rssi);
+                  //NRF_LOG_INFO("Full Advertisement Packet:");
+                  //NRF_LOG_HEXDUMP_INFO(p_adv_report->data.p_data, p_adv_report->data.len);
 
+
+                  //NRF_LOG_INFO("Manu spec data:");
+                  //NRF_LOG_HEXDUMP_INFO(&p_adv_report->data.p_data[data_offset], manuf_data_len);
+
+                  // Log the MAC address
+                  Get_Connect_MAC_Address((ble_gap_addr_t *)&p_adv_report->peer_addr);
+
+                  // Log the RSSI value
+                  //NRF_LOG_INFO("RSSI: %d", p_adv_report->rssi);
+                  char timestamp[16];
+                  get_timestamp(timestamp, sizeof(timestamp));
+
+
+                  NRF_LOG_INFO("RSSI: %d, timestamp: %u",
+                               p_adv_report->rssi,
+                               seconds_since_start);
+
+                }
               }
-            }
-        }
-    }
-    }
+          }
+      }
+      }
 
-    // Resume the scanning.
-    ret_code_t err_code = sd_ble_gap_scan_start(NULL, &m_scann_ctx.scan_buffer);
-    if ((err_code != NRF_ERROR_INVALID_STATE) && (err_code != NRF_SUCCESS))
-    {
-        NRF_LOG_ERROR("sd_ble_gap_scan_start returned 0x%x", err_code);
-    }
-    
-}
+      // Resume the scanning.
+      ret_code_t err_code = sd_ble_gap_scan_start(NULL, &m_scann_ctx.scan_buffer);
+      if ((err_code != NRF_ERROR_INVALID_STATE) && (err_code != NRF_SUCCESS))
+      {
+          NRF_LOG_ERROR("sd_ble_gap_scan_start returned 0x%x", err_code);
+      }
+
+  }
 break;
 
 
@@ -1104,6 +1136,12 @@ static void button_event_handler(uint8_t pin_no, uint8_t button_action)
         {
             NRF_LOG_INFO("Logging Started");
             m_logging_is_running = true;
+            if (!timer_started) {
+                seconds_since_start = 0;  // Reset the counter when logging starts
+                ret_code_t err_code = app_timer_start(m_timer_id, APP_TIMER_TICKS(1000), NULL);
+                APP_ERROR_CHECK(err_code);
+                timer_started = true;
+            }
         }
         break;
 
@@ -1112,6 +1150,7 @@ static void button_event_handler(uint8_t pin_no, uint8_t button_action)
         {
             NRF_LOG_INFO("Logging Stopped");
             m_logging_is_running = false;
+
         }
         break;
 
