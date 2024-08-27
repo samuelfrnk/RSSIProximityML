@@ -137,7 +137,8 @@ static bool m_advertising_is_running = false;
 static bool m_advertising_filter_is_running = false;
 
 static uint8_t m_enc_advdata[BLE_GAP_ADV_SET_DATA_SIZE_MAX];                    /**< Buffer for storing an encoded advertising set. */
-static uint8_t m_enc_scan_response_data[BLE_GAP_ADV_SET_DATA_SIZE_MAX];         /**< Buffer for storing an encoded scan data. */
+static uint8_t m_enc_scan_response_data[BLE_GAP_ADV_SET_DATA_SIZE_MAX];  
+static bool m_logging_is_running = false;       
 
 /**@brief Struct that contains pointers to the encoded advertising data. */
 static ble_gap_adv_data_t m_adv_data =
@@ -614,6 +615,8 @@ case BLE_GAP_EVT_ADV_REPORT:
     //NRF_LOG_INFO("Received advertisement data with length: %d", p_adv_report->data.len);
     //NRF_LOG_HEXDUMP_INFO(p_adv_report->data.p_data, p_adv_report->data.len);
 
+    if (m_logging_is_running)
+    {
     // Filter for Apple Manufacturer Specific Data
     uint16_t data_offset = 0;
     uint8_t manuf_data_len = ble_advdata_search(p_adv_report->data.p_data,
@@ -657,6 +660,7 @@ case BLE_GAP_EVT_ADV_REPORT:
             }
         }
     }
+    }
 
     // Resume the scanning.
     ret_code_t err_code = sd_ble_gap_scan_start(NULL, &m_scann_ctx.scan_buffer);
@@ -664,6 +668,7 @@ case BLE_GAP_EVT_ADV_REPORT:
     {
         NRF_LOG_ERROR("sd_ble_gap_scan_start returned 0x%x", err_code);
     }
+    
 }
 break;
 
@@ -1092,48 +1097,42 @@ static void idle_state_handle(void)
  */
 static void button_event_handler(uint8_t pin_no, uint8_t button_action)
 {
-        ret_code_t err_code;
-        ble_gap_phys_t phys;
-
-        switch (pin_no)
+    switch (pin_no)
+    {
+    case ADV_FILTER_ON_BUTTON:  // Repurposed to start logging
+        if(button_action == APP_BUTTON_PUSH)
         {
-        case ADV_FILTER_ON_BUTTON:
-                if(button_action == APP_BUTTON_PUSH)
-                {
-                        NRF_LOG_INFO("Adv Filter On");
-                        advertising_with_filter_start();
-                }
-                break;
-
-        case ADV_FILTER_OFF_BUTTON:
-                if(button_action == APP_BUTTON_PUSH)
-                {
-                        NRF_LOG_INFO("Adv Filter Off");
-                        advertising_start();
-                }
-                break;
-
-        case ADV_TURN_ON_BUTTON:
-                if(button_action == APP_BUTTON_PUSH)
-                {
-
-                        advertising_start();
-
-                }
-                break;
-
-        case ADV_TURN_OFF_BUTTON:
-                if(button_action == APP_BUTTON_PUSH)
-                {
-                        advertising_stop();
-                }
-                break;
-
-
-        default:
-                APP_ERROR_HANDLER(pin_no);
-                break;
+            NRF_LOG_INFO("Logging Started");
+            m_logging_is_running = true;
         }
+        break;
+
+    case ADV_FILTER_OFF_BUTTON:  // Repurposed to stop logging
+        if(button_action == APP_BUTTON_PUSH)
+        {
+            NRF_LOG_INFO("Logging Stopped");
+            m_logging_is_running = false;
+        }
+        break;
+
+    case ADV_TURN_ON_BUTTON:  // Can be left unused or repurposed
+        if(button_action == APP_BUTTON_PUSH)
+        {
+            // Potential future use or leave empty
+        }
+        break;
+
+    case ADV_TURN_OFF_BUTTON:  // Can be left unused or repurposed
+        if(button_action == APP_BUTTON_PUSH)
+        {
+            // Potential future use or leave empty
+        }
+        break;
+
+    default:
+        APP_ERROR_HANDLER(pin_no);
+        break;
+    }
 }
 
 /**@brief Function for initializing the button handler module.
