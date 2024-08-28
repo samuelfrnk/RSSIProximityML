@@ -143,7 +143,7 @@ static const float distance_array[] = {
     8.5, 9.0, 9.5, 10.0
 };
 static int current_distance_index = 0;
-static float current_distance = 0.0f;  // Declare this globally at the top of your file
+
 
 
 static uint8_t m_enc_advdata[BLE_GAP_ADV_SET_DATA_SIZE_MAX];                    /**< Buffer for storing an encoded advertising set. */
@@ -1143,10 +1143,11 @@ static void button_event_handler(uint8_t pin_no, uint8_t button_action)
     case ADV_FILTER_ON_BUTTON:  // Start logging
         if(button_action == APP_BUTTON_PUSH)
         {
+            NRF_LOG_INFO("Current index: %d", current_distance_index);
             if (current_distance_index < sizeof(distance_array) / sizeof(distance_array[0]))
             {
-                current_distance = distance_array[current_distance_index];
-                NRF_LOG_INFO("Starting logs %.1f m", current_distance);
+                //float current_distance = distance_array[current_distance_index];
+                //NRF_LOG_INFO("Starting logs %.1f m", current_distance);
                 m_logging_is_running = true;
                 if (!timer_started) {
                     seconds_since_start = 0;  // Reset the counter when logging starts
