@@ -136,6 +136,15 @@ static ble_uuid_t m_adv_uuids[]          =                                      
 static uint8_t m_adv_handle = BLE_GAP_ADV_SET_HANDLE_NOT_SET;                   /**< Advertising handle used to identify an advertising set. */
 static bool m_advertising_is_running = false;
 static bool m_advertising_filter_is_running = false;
+static const float distance_array[] = {
+    0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0,
+    1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0,
+    2.5, 3.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0,
+    8.5, 9.0, 9.5, 10.0
+};
+static int current_distance_index = 0;
+static float current_distance = 0.0f;  // Declare this globally at the top of your file
+
 
 static uint8_t m_enc_advdata[BLE_GAP_ADV_SET_DATA_SIZE_MAX];                    /**< Buffer for storing an encoded advertising set. */
 static uint8_t m_enc_scan_response_data[BLE_GAP_ADV_SET_DATA_SIZE_MAX];
@@ -1131,20 +1140,30 @@ static void button_event_handler(uint8_t pin_no, uint8_t button_action)
 {
     switch (pin_no)
     {
-    case ADV_FILTER_ON_BUTTON:  // Repurposed to start logging
+    case ADV_FILTER_ON_BUTTON:  // Start logging
         if(button_action == APP_BUTTON_PUSH)
         {
-            NRF_LOG_INFO("Logging Started");
-            m_logging_is_running = true;
-            if (!timer_started) {
-                seconds_since_start = 0;  // Reset the counter when logging starts
-                ret_code_t err_code = app_timer_start(m_timer_id, APP_TIMER_TICKS(1000), NULL);
-                APP_ERROR_CHECK(err_code);
-                timer_started = true;
+            if (current_distance_index < sizeof(distance_array) / sizeof(distance_array[0]))
+            {
+                current_distance = distance_array[current_distance_index];
+                NRF_LOG_INFO("Starting logs %.1f m", current_distance);
+                m_logging_is_running = true;
+                if (!timer_started) {
+                    seconds_since_start = 0;  // Reset the counter when logging starts
+                    ret_code_t err_code = app_timer_start(m_timer_id, APP_TIMER_TICKS(1000), NULL);
+                    APP_ERROR_CHECK(err_code);
+                    timer_started = true;
+                }
+                current_distance_index++;
+            }
+            else
+            {
+                NRF_LOG_INFO("Experiment finished");
+                m_logging_is_running = false;
+                current_distance_index = 0;  // Reset for potential future use
             }
         }
         break;
-
     case ADV_FILTER_OFF_BUTTON:  // Repurposed to stop logging
         if(button_action == APP_BUTTON_PUSH)
         {
