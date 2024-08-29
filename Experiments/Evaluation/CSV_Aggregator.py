@@ -1,7 +1,6 @@
 import pandas as pd
 
-
-file_name = 'PASTE FILENAME'
+file_name = 'YOUR_FILENAME'
 df = pd.read_csv(file_name)
 
 df['Timestamp'] = pd.to_datetime(df['Timestamp'])
@@ -17,19 +16,15 @@ grouped = df.groupby('Distance').agg(
 
 grouped['time_between_first_and_last_measurement'] = grouped['time_between_first_and_last_measurement'].dt.total_seconds()
 
-overall = {
-    'Distance': 'Overall',
-    'average_rssi': df['RSSI-Value'].mean(),
-    'total_measurements': df['RSSI-Value'].count(),
-    'number_different_mac_addresses': df['MAC-Address'].nunique(),
-    'time_between_first_and_last_measurement': (df['Timestamp'].max() - df['Timestamp'].min()).total_seconds(),
-    'lowest_rssi': df['RSSI-Value'].min(),
-    'highest_rssi': df['RSSI-Value'].max()
-}
+overall = pd.DataFrame({
+    'Distance': ['Overall'],
+    'average_rssi': [df['RSSI-Value'].mean()],
+    'total_measurements': [df['RSSI-Value'].count()],
+    'number_different_mac_addresses': [df['MAC-Address'].nunique()],
+    'time_between_first_and_last_measurement': [(df['Timestamp'].max() - df['Timestamp'].min()).total_seconds()],
+    'lowest_rssi': [df['RSSI-Value'].min()],
+    'highest_rssi': [df['RSSI-Value'].max()]
+})
 
-grouped = grouped.append(overall, ignore_index=True)
+grouped = pd.concat([grouped, overall], ignore_index=True)
 grouped.to_csv('aggregated_data_with_overall.csv', index=False)
-
-
-
-
