@@ -4,7 +4,7 @@ import numpy as np
 data = pd.read_csv('Aggregated_Ex_1_and_2.csv')
 
 rssi_ref = -66.79
-n = 2
+n = 4
 
 
 def estimate_distance(rssi, rssi_ref, n):
@@ -22,5 +22,5 @@ data['error'] = np.abs(data['Distance'] - data['estimated_distance'])
 
 result = data[['Distance', 'average_rssi', 'estimated_distance', 'error']]
 
-result.to_csv('estimated_distances.csv', index=False)
+result.to_csv('evaluation_n_4.csv', index=False)
 
