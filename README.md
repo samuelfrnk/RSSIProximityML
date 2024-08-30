@@ -8,7 +8,7 @@ This project is part of my bachelor thesis. It is designed to extract and proces
 ### Main components 
 
 1. The folder `ble_app_uart_adv_scan` contains the source code including the main.c file. It can scan BLE packets, filters AirTags and logs the corresponding RSSI value together with the MAC-Adress.
-2. The folder `Experiments` contains a subfolder [Evaluation](Experiments/Evaluation) tools written in python for creating and analyzing CSV files out of the raw scanning logs. The subfolder `Results` contains raw        
+2. The folder [Evaluation](Experiments) contains a subfolder [Evaluation](Experiments/Evaluation) tools written in python for creating and analyzing CSV files out of the raw scanning logs. The subfolder `Results` contains raw        
 
 ### Requirement
 * nRF5 SDK 17.02
