@@ -12,8 +12,12 @@ This project is part of my bachelor thesis. It is designed to extract and proces
 
 ### Experiments 
 
-1. The first data gathering experiment took place in the BINZ building of the university of zurich: 
+The first data gathering experiment took place in the BINZ building of the university of zurich. The distance was gradually increased from 0m to 8.5m: 
 - [Raw logging files](Experiments/Results/Raw%20Data/Experiment1_0m_8.5m.rtf)
+- [Standardized labeled CSV files](Experiments/Results/Raw%20Data/Experiment1_0m_8.5m.rtf)
+- [Metadata ](Experiments/Results/Overview%20Data/Aggregated_Ex_1_and_2.csv) about the set grouped by distance.
+
+
        
 
 ### Requirement
