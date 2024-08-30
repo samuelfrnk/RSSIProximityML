@@ -19,7 +19,7 @@ The first data gathering experiment took place in the BINZ building of the unive
 
 The first data gathering experiment took place in the BINZ building of the university of zurich. The distance was gradually increased from 9m to 55m. The set contains : 
 - [Raw logging files](Experiments/Results/Raw%20Data/Experiment2_9m_55m.rtf)
-- [Standardized labeled CSV files](EExperiments/Results/Processed%20Data/Experiment2_9m_55m.csv)
+- [Standardized labeled CSV files](Experiments/Results/Processed%20Data/Experiment2_9m_55m.csv)
 - [Metadata ](Experiments/Results/Overview%20Data/Aggregated_Ex_1_and_2.csv) about the set grouped by distance.
 
        
