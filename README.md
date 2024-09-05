@@ -10,12 +10,14 @@ This project is part of my bachelor thesis. It is designed to extract and proces
 1. The folder `ble_app_uart_adv_scan` contains the source code including the main.c file. It can scan BLE packets, filters AirTags and logs the corresponding RSSI value together with the MAC-Adress.
 2. The folder [Experiment](Experiments) contains a subfolder [Evaluation](Experiments/Evaluation) with tools written in python for creating and analyzing CSV files out of the raw scanning logs. The subfolder [Results](Experiments/Results) contains raw logging data from experiments, processed data in CSV format and aggregated data in CSV format. 
 
-### Experiments 
+### First Experiment
 
 The first data gathering experiment took place in the BINZ building of the university of zurich. The distance was gradually increased from 0m to 8.5m. The set contains 2'496 entries: 
 - [Raw logging files](Experiments/Results/Raw%20Data/Experiment1_0m_8.5m.rtf)
 - [Standardized labeled CSV files](Experiments/Results/Processed%20Data/Experiment1_0m_8.csv)
 - [Metadata ](Experiments/Results/Overview%20Data/Aggregated_Ex_1_and_2.csv) about the set grouped by distance.
+
+### Second Experiment
 
 The first data gathering experiment took place in the BINZ building of the university of zurich. The distance was gradually increased from 9m to 55m. The set contains 801 entries: 
 - [Raw logging files](Experiments/Results/Raw%20Data/Experiment2_9m_55m.rtf)
