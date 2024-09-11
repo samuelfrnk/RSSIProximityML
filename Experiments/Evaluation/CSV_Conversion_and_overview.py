@@ -1,14 +1,15 @@
 import csv
 from datetime import datetime, timedelta
+import pandas as pd
 
 
 # This program is dedicated to aggregate the data from the experiments into a CSV file.
 
-filename = 'Batteries_replaced_11_21.rtf'
+filename = 'pairing_airtags'
 distances = [0]
 
 # The exact time when you started the experiment by enabling logs in nRF board for the first time
-time_of_start_experiment = datetime(2024, 9, 11, 11, 21, 0)
+time_of_start_experiment = datetime(2024, 9, 11, 15, 45, 0)
 
 
 # This global variable keeps track of the distance of the individual measurements. It will be changed during the
@@ -16,11 +17,12 @@ time_of_start_experiment = datetime(2024, 9, 11, 11, 21, 0)
 # distance of each measurement.
 indexCurrentAsInt = 0
 
+filename_rtf = filename + '.rtf'
 
-with open(filename, 'r') as file:
+with open(filename_rtf, 'r') as file:
     lines = file.readlines()
 
-with (open(filename.split('.')[0] + '.csv', 'w') as csvfile):
+with (open(filename_rtf.split('.')[0] + '.csv', 'w') as csvfile):
     fieldnames = ['RSSI-Value', 'MAC-Address', 'Timestamp', 'Distance']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
@@ -45,4 +47,31 @@ with (open(filename.split('.')[0] + '.csv', 'w') as csvfile):
             })
 
 
+filename_csv = filename + '.csv'
+df = pd.read_csv(filename_csv)
 
+df['Timestamp'] = pd.to_datetime(df['Timestamp'], errors='coerce')
+
+grouped = df.groupby('Distance').agg(
+    average_rssi=('RSSI-Value', 'mean'),
+    total_measurements=('RSSI-Value', 'count'),
+    number_different_mac_addresses=('MAC-Address', pd.Series.nunique),
+    time_between_first_and_last_measurement=('Timestamp', lambda x: x.max() - x.min()),
+    lowest_rssi=('RSSI-Value', 'min'),
+    highest_rssi=('RSSI-Value', 'max')
+).reset_index()
+
+grouped['time_between_first_and_last_measurement'] = grouped['time_between_first_and_last_measurement'].dt.total_seconds()
+
+overall = pd.DataFrame({
+    'Distance': ['Overall'],
+    'average_rssi': [df['RSSI-Value'].mean()],
+    'total_measurements': [df['RSSI-Value'].count()],
+    'number_different_mac_addresses': [df['MAC-Address'].nunique()],
+    'time_between_first_and_last_measurement': [(df['Timestamp'].max() - df['Timestamp'].min()).total_seconds()],
+    'lowest_rssi': [df['RSSI-Value'].min()],
+    'highest_rssi': [df['RSSI-Value'].max()]
+})
+
+grouped = pd.concat([grouped, overall], ignore_index=True)
+grouped.to_csv(filename + '_aggregated.csv', index=False)
