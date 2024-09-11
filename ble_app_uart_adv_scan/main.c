@@ -173,7 +173,7 @@ static ble_gap_adv_data_t m_adv_data =
 
 /* Scanner configuration */
 #define APP_SCAN_SCAN_INTERVAL            (0xA0)     /**< Scanning interval. Determines the scan interval in units of 0.625 millisecond. */
-#define APP_SCAN_SCAN_WINDOW              (0x50)      /**< Scanning window. Determines the scanning window in units of 0.625 millisecond. */
+#define APP_SCAN_SCAN_WINDOW              (0xA0)      /**< Scanning window. Determines the scanning window in units of 0.625 millisecond. */
 
 #define APP_SCAN_DURATION           BLE_GAP_SCAN_TIMEOUT_UNLIMITED  /**< Duration of the scanning in units of 10 milliseconds. */
 #define APP_SCAN_ACTIVE_DISABLED    0                               /**< Only passive scanning will be processed, no scan request send. */
