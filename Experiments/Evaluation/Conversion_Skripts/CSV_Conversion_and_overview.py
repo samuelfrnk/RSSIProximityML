@@ -5,8 +5,8 @@ import pandas as pd
 
 # This program is dedicated to aggregate the data from the experiments into a CSV file.
 
-filename = 'pairing_airtags'
-distances = [0]
+filename = 'TEST_DUMMY'
+distances = [0, 0.1, 0.2, 0.3, 3]
 
 # The exact time when you started the experiment by enabling logs in nRF board for the first time
 time_of_start_experiment = datetime(2024, 9, 11, 15, 45, 0)

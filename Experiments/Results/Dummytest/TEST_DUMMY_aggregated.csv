@@ -1,0 +1,7 @@
+Distance,average_rssi,total_measurements,number_different_mac_addresses,time_between_first_and_last_measurement,lowest_rssi,highest_rssi
+0.0,-27.55,60,12,20.0,-83,-17
+0.1,-35.08641975308642,81,14,28.0,-79,-23
+0.2,-36.54054054054054,74,12,25.0,-83,-25
+0.3,-40.01176470588236,85,12,29.0,-80,-28
+3.0,-63.19827586206897,116,12,41.0,-82,-29
+Overall,-43.10336538461539,416,14,193.0,-83,-17
