@@ -140,7 +140,7 @@ static const float distance_array[] = {
     0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0,
     1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0,
     2.5, 3.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0,
-    8.5, 9.0, 9.5, 10.0
+    8.5, 9.0, 9.5, 10.0, 10.5
 };
 static int current_distance_index = 0;
 
@@ -1144,7 +1144,7 @@ static void button_event_handler(uint8_t pin_no, uint8_t button_action)
         if(button_action == APP_BUTTON_PUSH)
         {
             NRF_LOG_INFO("Current index: %d", current_distance_index);
-            if (current_distance_index < sizeof(distance_array) / sizeof(distance_array[0]))
+            if (current_distance_index < (sizeof(distance_array) / sizeof(distance_array[0])) + 1 )
             {
                 //float current_distance = distance_array[current_distance_index];
                 //NRF_LOG_INFO("Starting logs %.1f m", current_distance);
