@@ -1,6 +1,6 @@
 import pandas as pd
 
-file_name = 'YOUR_FILENAME.csv'
+file_name = 'Experiment_with_No_Batteries.csv'
 df = pd.read_csv(file_name)
 
 df['Timestamp'] = pd.to_datetime(df['Timestamp'], errors='coerce')
