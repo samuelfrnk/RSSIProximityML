@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This project is part of my bachelor thesis. It is designed to extract and process RSSI values from Bluetooth Low Energy (BLE) packets from AirTags. 
+This project is part of my bachelor thesis. The focus is on gathering RSSI data with a script compatible with a nRF52840 DK Board (pca10056). Further it also contains [Data](Experiments/Results/Data_CSV) tools for processing 
 [This repository](https://github.com/jimmywong2003/nrf5-ble-scan-filter-example) has been used as a foundation for the nrf Application.
 
 ### Main components 
