@@ -8,7 +8,7 @@ This project is part of my bachelor thesis. The focus is on scanning BLE packets
 ### Main components 
 
 1. The folder [ble_app_uart_adv_scan](ble_app_uart_adv_scan) contains the source code including the main.c file. It can scan BLE packets, filters AirTags and logs the corresponding RSSI value together with the MAC-Adress.
-2. The folder [Experiment](Experiments) contains both data and tools used to gather the data. 
+2. The folder [Experiments](Experiments) contains both data and tools used to gather the data. 
 
 ### First Experiment
 
