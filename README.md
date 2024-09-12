@@ -14,9 +14,9 @@ This project is part of my bachelor thesis. The focus is on scanning BLE packets
 
 | Experiment Nr. | Entries             | Data                                      | Plots                | Metadata                                   |
 |----------------|---------------------|-------------------------------------------|----------------------|--------------------------------------------|
-| 1              | 1500 RSSI values     | [Experiment_1.csv](Experiments/Results/Data_CSV/Experiment_1.csv) | ![Plot 1](path_to_plot_1) | Includes AirTag MAC, Timestamp, Distance   |
-| 2              | 1800 RSSI values     | [Experiment_2.csv](Experiments/Results/Data_CSV/Experiment_2.csv) | ![Plot 2](path_to_plot_2) | Includes AirTag MAC, Timestamp, Distance   |
-| 3              | 2000 RSSI values     | [Experiment_3.csv](Experiments/Results/Data_CSV/Experiment_3.csv) | ![Plot 3](path_to_plot_3) | Includes AirTag MAC, Timestamp, Distance   |
+| 1              | 1500 RSSI values     | [Experiment_1.csv](Experiments/Results/Data_CSV/Experiment_1.csv) | [Plots](Experiments/Results/Plots/Experiment_1) | Includes AirTag MAC, Timestamp, Distance   |
+| 2              | 1800 RSSI values     | [Experiment_2.csv](Experiments/Results/Data_CSV/Experiment_2.csv) | [Plots](path_to_plot_2) | Includes AirTag MAC, Timestamp, Distance   |
+| 3              | 2000 RSSI values     | [Experiment_3.csv](Experiments/Results/Data_CSV/Experiment_3.csv) | [Plots](path_to_plot_3) | Includes AirTag MAC, Timestamp, Distance   |
 
 
        
