@@ -10,19 +10,14 @@ This project is part of my bachelor thesis. The focus is on scanning BLE packets
 1. The folder [ble_app_uart_adv_scan](ble_app_uart_adv_scan) contains the source code including the main.c file. It can scan BLE packets, filters AirTags and logs the corresponding RSSI value together with the MAC-Adress.
 2. The folder [Experiments](Experiments) contains both data and tools used to gather the data. 
 
-### First Experiment
+### Experiments
 
-The first data gathering experiment took place in the BINZ building of the university of zurich. The distance was gradually increased from 0m to 8.5m. The set contains 2'496 entries: 
-- [Raw logging files](Experiments/Results/Raw%20Data/Experiment1_0m_8.5m.rtf)
-- [Standardized labeled CSV files](Experiments/Results/Processed%20Data/Experiment1_0m_8.csv)
-- [Metadata ](Experiments/Results/Overview%20Data/Aggregated_Ex_1_and_2.csv) about the set grouped by distance.
+| Experiment Nr. | Entries             | Data                                      | Plots                | Metadata                                   |
+|----------------|---------------------|-------------------------------------------|----------------------|--------------------------------------------|
+| 1              | 1500 RSSI values     | [Experiment_1.csv](Experiments/Results/Data_CSV/Experiment_1.csv) | ![Plot 1](path_to_plot_1) | Includes AirTag MAC, Timestamp, Distance   |
+| 2              | 1800 RSSI values     | [Experiment_2.csv](Experiments/Results/Data_CSV/Experiment_2.csv) | ![Plot 2](path_to_plot_2) | Includes AirTag MAC, Timestamp, Distance   |
+| 3              | 2000 RSSI values     | [Experiment_3.csv](Experiments/Results/Data_CSV/Experiment_3.csv) | ![Plot 3](path_to_plot_3) | Includes AirTag MAC, Timestamp, Distance   |
 
-### Second Experiment
-
-The first data gathering experiment took place in the BINZ building of the university of zurich. The distance was gradually increased from 9m to 55m. The set contains 801 entries: 
-- [Raw logging files](Experiments/Results/Raw%20Data/Experiment2_9m_55m.rtf)
-- [Standardized labeled CSV files](Experiments/Results/Processed%20Data/Experiment2_9m_55m.csv)
-- [Metadata ](Experiments/Results/Overview%20Data/Aggregated_Ex_1_and_2.csv) about the set grouped by distance.
 
        
 
