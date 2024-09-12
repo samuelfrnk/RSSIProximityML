@@ -5,11 +5,15 @@ import pandas as pd
 
 # This program is dedicated to aggregate the data from the experiments into a CSV file.
 
-filename = 'TEST_DUMMY'
-distances = [0, 0.1, 0.2, 0.3, 3]
-
+filename = 'Experiment_3'
+distances = [
+    0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0,
+    1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0,
+    2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0,
+    7.5, 8.0, 8.5, 9.0, 9.5, 10
+]
 # The exact time when you started the experiment by enabling logs in nRF board for the first time
-time_of_start_experiment = datetime(2024, 9, 11, 15, 45, 0)
+time_of_start_experiment = datetime(2024, 9, 12, 9, 45, 0)
 
 
 # This global variable keeps track of the distance of the individual measurements. It will be changed during the
