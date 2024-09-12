@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This project is part of my bachelor thesis. The focus is on gathering RSSI data with a script compatible with a nRF52840 DK Board (pca10056). Further it also contains [Data](Experiments/Results/Data_CSV) tools for processing 
+This project is part of my bachelor thesis. The focus is on gathering RSSI data with a script compatible with a nRF52840 DK Board (pca10056). Further it also contains [RSSI Data](Experiments/Results/Data_CSV) and tools used for processing the data.
 [This repository](https://github.com/jimmywong2003/nrf5-ble-scan-filter-example) has been used as a foundation for the nrf Application.
 
 ### Main components 
