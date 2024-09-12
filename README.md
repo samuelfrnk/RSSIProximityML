@@ -12,11 +12,12 @@ This project is part of my bachelor thesis. The focus is on scanning BLE packets
 
 ### Experiments
 
-| Experiment Nr. | Entries             | Data                                      | Plots                | Metadata                                   |
-|----------------|---------------------|-------------------------------------------|----------------------|--------------------------------------------|
-| 1              | 2496 RSSI values     | [Experiment_1.csv](Experiments/Results/Data_CSV/Experiment_1.csv) | [Plots](Experiments/Results/Plots/Experiment_1) | [Metadata](Experiments/Results/Overview_Data/Experiment_1_and_2.csv)  |
-| 2              | 707 RSSI values     | [Experiment_2.csv](Experiments/Results/Data_CSV/Experiment_2.csv) | [Plots](Experiments/Results/Plots/Experiment_2) | [Metadata](Experiments/Results/Overview_Data/Experiment_1_and_2.csv)   |
-| 3              | 5869 RSSI values     | [Experiment_3.csv](Experiments/Results/Data_CSV/Experiment_3.csv) | [Plots](Experiments/Results/Plots/Experiment_3) | [Metadata](Experiments/Results/Overview_Data/Experiment_3.csv)   |
+| Experiment Nr. | Entries             | Data                                      | Plots                | Metadata                                   | Distance (m)                        |
+|----------------|---------------------|-------------------------------------------|----------------------|--------------------------------------------|-------------------------------------|
+| 1              | 2496 RSSI values     | [Experiment_1.csv](Experiments/Results/Data_CSV/Experiment_1.csv) | [Plots](Experiments/Results/Plots/Experiment_1) | [Metadata](Experiments/Results/Overview_Data/Experiment_1_and_2.csv)  | 0.1 - 2.0                          |
+| 2              | 707 RSSI values      | [Experiment_2.csv](Experiments/Results/Data_CSV/Experiment_2.csv) | [Plots](Experiments/Results/Plots/Experiment_2) | [Metadata](Experiments/Results/Overview_Data/Experiment_1_and_2.csv)   | 2.0 - 10.0                         |
+| 3              | 5869 RSSI values     | [Experiment_3.csv](Experiments/Results/Data_CSV/Experiment_3.csv) | [Plots](Experiments/Results/Plots/Experiment_3) | [Metadata](Experiments/Results/Overview_Data/Experiment_3.csv)   | 0.1 - 10.0                         |
+
 
 Notes: 
 - Based on insights from Experiments 1 and 2, the methodology was adjusted, leading to more concise data collection in Experiment 3.
