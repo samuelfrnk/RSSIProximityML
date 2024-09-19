@@ -36,10 +36,10 @@ r_squared = 1 - (ss_res / ss_tot)
 
 # Plotting
 plt.figure(figsize=(10, 6))
-plt.scatter(distances, rssi_values, label='Data Points')
+plt.scatter(distances, rssi_values, label='Average RSSI values')
 plt.plot(distances, fitted_rssi_values, color='red', label='Fitted Exponential Decay Curve')
 plt.xlabel('Distance')
-plt.ylabel('Average RSSI Value')
+plt.ylabel('RSSI Value')
 plt.title(f'Average RSSI Value for Each Distance with Fitted Exponential Curve\n$R^2 = {r_squared:.4f}$')
 plt.legend()
 plt.grid(True)
