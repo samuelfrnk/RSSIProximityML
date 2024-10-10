@@ -3,12 +3,14 @@
 ## Introduction
 
 This project is part of my bachelor thesis. The focus is on scanning BLE packets containing RSSI data emitted from AirTags with a [skript](ble_app_uart_adv_scan/main.c) compatible with a nRF52840 DK Board (pca10056). Further it also contains [RSSI Data](Experiments/Results/Data_CSV) and tools used for processing the data.
+
 [This repository](https://github.com/jimmywong2003/nrf5-ble-scan-filter-example) has been used as a foundation for the nrf Application.
 
 ### Main components 
 
 1. The folder [ble_app_uart_adv_scan](ble_app_uart_adv_scan) contains the source code including the main.c file. It can scan BLE packets, filters AirTags and logs the corresponding RSSI value together with the MAC-Adress.
-2. The folder [Experiments](Experiments) contains both data and tools used to gather the data. 
+2. The folder [Experiments](Experiments) contains both data and tools used to gather the data.
+3. The folder [ML_Analysis](ML_Analysis) contains the ML models and their evaluation in the form of JupyterNoteBook files. 
 
 ### Experiments Data Collection
 
