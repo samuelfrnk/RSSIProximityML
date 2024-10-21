@@ -19,7 +19,7 @@ This project is part of my bachelor thesis. The focus is on scanning BLE packets
 | 1              | 2496 RSSI values     | [Experiment_1.csv](Experiments/Results/Data_CSV/Experiment_1.csv) | [Plots](Experiments/Results/Plots/Experiment_1) | [Metadata](Experiments/Results/Overview_Data/Experiment_1_and_2.csv)  | 0.0 - 8.5                          |
 | 2              | 707 RSSI values      | [Experiment_2.csv](Experiments/Results/Data_CSV/Experiment_2.csv) | [Plots](Experiments/Results/Plots/Experiment_2) | [Metadata](Experiments/Results/Overview_Data/Experiment_1_and_2.csv)   | 10.0 - 50.0                         |
 | 3              | 5869 RSSI values     | [Experiment_3.csv](Experiments/Results/Data_CSV/Experiment_3.csv) | [Plots](Experiments/Results/Plots/Experiment_3) | [Metadata](Experiments/Results/Overview_Data/Experiment_3.csv)   | 0.0 - 10.0                         |
-| 3              | 956 RSSI values     | [Experiment_3.csv](Experiments/Results/Data_CSV/Experiment_4.csv) | [Plots](Experiments/Results/Plots/Experiment_3) | [Metadata](Experiments/Results/Overview_Data/Experiment_4.csv)   | 0.0 - 2.0                         |
+| 3              | 956 RSSI values     | [Experiment_4.csv](Experiments/Results/Data_CSV/Experiment_4.csv) | [Plots](Experiments/Results/Plots/Experiment_3) | [Metadata](Experiments/Results/Overview_Data/Experiment_4.csv)   | 0.0 - 2.0                         |
 
 
 Notes: 
