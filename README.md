@@ -25,7 +25,8 @@ This project is part of my bachelor thesis. The focus is on scanning BLE packets
 
 Notes: 
 - Based on insights from Experiments 1 and 2, the methodology was adjusted, leading to more concise data collection in Experiment 3.
-- Experiment 4 was conducted to examine the influence of the battery life onto the RSSI values. 
+- Experiment 4 was conducted to examine the influence of the battery life onto the RSSI values.
+- Experiment 5 was conducted outside. 
  
 
 ### Experiments ML-Models 
