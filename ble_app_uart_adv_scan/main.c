@@ -669,10 +669,10 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
 
 
               uint8_t status_byte = p_adv_report->data.p_data[data_offset + 4];
-              uint8_t filtered_bits = status_byte & 0x30;
+              uint8_t flag_bits = status_byte & 0x30;
 
 
-                if (filtered_bits == 0x10)
+                if (flag_bits == 0x10)
                 {
                   NRF_LOG_INFO("AirTag Identified");
 
