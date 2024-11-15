@@ -658,7 +658,7 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
                                                   &data_offset,
                                                   BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA);
 
-      if (manuf_data_len >= 4) // Minimum length for manufacturer data is 2 (Company Identifier)
+      if (manuf_data_len >= 4) 
       {
           // Check if the manufacturer is Apple (0x004C)
           uint16_t company_identifier = uint16_decode(&p_adv_report->data.p_data[data_offset]);
