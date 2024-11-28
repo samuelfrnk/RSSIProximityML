@@ -12,7 +12,7 @@ This project is part of my bachelor thesis. The focus is on scanning BLE packets
 2. The folder [Experiments](Experiments) contains both data and tools used to gather the data.
 3. The folder [ML_Analysis](ML_Analysis) contains the ML models and their evaluation in the form of JupyterNoteBook files. 
 
-### Experiments Data Collection
+### Dataset
 
 The final Dataset used in the thesis can be found [here](Experiments/Results/Data_CSV/Combined_Data). 
 
