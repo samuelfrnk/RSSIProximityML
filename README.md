@@ -14,6 +14,10 @@ This project is part of my bachelor thesis. The focus is on scanning BLE packets
 
 ### Experiments Data Collection
 
+The final Dataset used in the thesis can be found [here](Experiments/Results/Data_CSV/Combined_Data). 
+
+### Experiments Data Collection
+
 | Experiment Nr. | Entries             | Data                                      | Plots                | Metadata                                   | Distance (m)                        |
 |----------------|---------------------|-------------------------------------------|----------------------|--------------------------------------------|-------------------------------------|
 | 1              | 2496 RSSI values     | [Experiment_1.csv](Experiments/Results/Data_CSV/Experiment_1.csv) | [Plots](Experiments/Results/Plots/Experiment_1) | [Metadata](Experiments/Results/Overview_Data/Experiment_1_and_2.csv)  | 0.0 - 8.5                          |
