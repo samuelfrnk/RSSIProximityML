@@ -1,4 +1,4 @@
-# RSSI-data collection and Processing 
+# Bachelor Thesis Samuel Frank
 
 ## Introduction
 
