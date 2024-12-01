@@ -26,13 +26,16 @@ The final Dataset used in the thesis can be found [here](Experiments/Results/Dat
 | 4              | 956 RSSI values     | [Experiment_4.csv](Experiments/Results/Data_CSV/Experiment_4.csv) | [Plots](Experiments/Results/Plots/Experiment_3) | [Metadata](Experiments/Results/Overview_Data/Experiment_4.csv)   | 0.0 - 2.0                         |
 | 5              | 3599 RSSI values     | [Experiment_5.csv](Experiments/Results/Data_CSV/Experiment_5.csv) | [Plots](Experiments/Results/Plots/Experiment_3) | [Metadata](Experiments/Results/Overview_Data/Experiment_4.csv)   | 0.0 - 2.0                         |
 | 6              | 4135 RSSI values     | [Experiment_6.csv](Experiments/Results/Data_CSV/Experiment_6.csv) | [Plots](Experiments/Results/Plots/Experiment_3) | [Metadata](Experiments/Results/Overview_Data/Experiment_6.csv)   | 0.0 - 2.0                         |
+| 7              | 3422 RSSI values     | [Experiment_6.csv](Experiments/Results/Data_CSV/Experiment_6.csv) | [Plots](Experiments/Results/Plots/Experiment_3) | [Metadata](Experiments/Results/Overview_Data/Experiment_6.csv)   | 0.0 - 2.0                         |
 
 
 Notes: 
 - Based on insights from Experiments 1 and 2, the methodology was adjusted, leading to more concise data collection in Experiment 3.
 - Experiment 4 was conducted to examine the influence of the battery life onto the RSSI values.
 - Experiment 5 was conducted outside. Before the data was aggregated inside the large dataset, entries corresponding to a Mac addresses which had a RSSI value over 30 were filtered out over the all distances.
-- Experiment 6 was conducted outside and NLOS.  
+- Experiment 6 was conducted indoor and NLOS.  
+- Experiment 7 was conducted outdoor and NLOS.  
+
  
 
 ### Experiments ML-Models 
