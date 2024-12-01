@@ -18,15 +18,16 @@ The final Dataset used in the thesis can be found [here](Experiments/Results/Dat
 
 ### Experiments Data Collection
 
-| Experiment Nr. | Entries             | Data                                      | Plots                | Metadata                                   | Distance (m)                        |
-|----------------|---------------------|-------------------------------------------|----------------------|--------------------------------------------|-------------------------------------|
-| 1              | 2496 RSSI values     | [Experiment_1.csv](Experiments/Results/Data_CSV/Experiment_1.csv) | [Plots](Experiments/Results/Plots/Experiment_1) | [Metadata](Experiments/Results/Overview_Data/Experiment_1_and_2.csv)  | 0.0 - 8.5                          |
-| 2              | 707 RSSI values      | [Experiment_2.csv](Experiments/Results/Data_CSV/Experiment_2.csv) | [Plots](Experiments/Results/Plots/Experiment_2) | [Metadata](Experiments/Results/Overview_Data/Experiment_1_and_2.csv)   | 10.0 - 50.0                         |
-| 3              | 5869 RSSI values     | [Experiment_3.csv](Experiments/Results/Data_CSV/Experiment_3.csv) | [Plots](Experiments/Results/Plots/Experiment_3) | [Metadata](Experiments/Results/Overview_Data/Experiment_3.csv)   | 0.0 - 10.0                         |
-| 4              | 956 RSSI values     | [Experiment_4.csv](Experiments/Results/Data_CSV/Experiment_4.csv) | [Plots](Experiments/Results/Plots/Experiment_3) | [Metadata](Experiments/Results/Overview_Data/Experiment_4.csv)   | 0.0 - 2.0                         |
-| 5              | 3599 RSSI values     | [Experiment_5.csv](Experiments/Results/Data_CSV/Experiment_5.csv) | [Plots](Experiments/Results/Plots/Experiment_3) | [Metadata](Experiments/Results/Overview_Data/Experiment_4.csv)   | 0.0 - 2.0                         |
-| 6              | 4135 RSSI values     | [Experiment_6.csv](Experiments/Results/Data_CSV/Experiment_6.csv) | [Plots](Experiments/Results/Plots/Experiment_3) | [Metadata](Experiments/Results/Overview_Data/Experiment_6.csv)   | 0.0 - 2.0                         |
-| 7              | 3422 RSSI values     | [Experiment_7.csv](Experiments/Results/Data_CSV/Experiment_7.csv) | [Plots](Experiments/Results/Plots/Experiment_3) | [Metadata](Experiments/Results/Overview_Data/Experiment_7.csv)   | 0.0 - 2.0                         |
+| Experiment Nr. | Entries             | Data                                      | Metadata                                   | Distance (m)                        |
+|----------------|---------------------|-------------------------------------------|--------------------------------------------|-------------------------------------|
+| 1              | 2496 RSSI values     | [Experiment_1.csv](Experiments/Results/Data_CSV/Experiment_1.csv) | [Metadata](Experiments/Results/Overview_Data/Experiment_1_and_2.csv)  | 0.0 - 8.5                          |
+| 2              | 707 RSSI values      | [Experiment_2.csv](Experiments/Results/Data_CSV/Experiment_2.csv) | [Metadata](Experiments/Results/Overview_Data/Experiment_1_and_2.csv)   | 10.0 - 50.0                         |
+| 3              | 5869 RSSI values     | [Experiment_3.csv](Experiments/Results/Data_CSV/Experiment_3.csv) | [Metadata](Experiments/Results/Overview_Data/Experiment_3.csv)   | 0.0 - 10.0                         |
+| 4              | 956 RSSI values     | [Experiment_4.csv](Experiments/Results/Data_CSV/Experiment_4.csv) | [Metadata](Experiments/Results/Overview_Data/Experiment_4.csv)   | 0.0 - 2.0                         |
+| 5              | 3599 RSSI values     | [Experiment_5.csv](Experiments/Results/Data_CSV/Experiment_5.csv) | [Metadata](Experiments/Results/Overview_Data/Experiment_4.csv)   | 0.0 - 2.0                         |
+| 6              | 4135 RSSI values     | [Experiment_6.csv](Experiments/Results/Data_CSV/Experiment_6.csv) | [Metadata](Experiments/Results/Overview_Data/Experiment_6.csv)   | 0.0 - 2.0                         |
+| 7              | 3422 RSSI values     | [Experiment_7.csv](Experiments/Results/Data_CSV/Experiment_7.csv) | [Metadata](Experiments/Results/Overview_Data/Experiment_7.csv)   | 0.0 - 2.0                         |
+
 
 
 Notes: 
