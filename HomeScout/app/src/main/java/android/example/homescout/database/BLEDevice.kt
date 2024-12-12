@@ -9,7 +9,8 @@ data class BLEDevice(
     var timestampInMilliSeconds: Long = 0L,
     var lat: Double,
     var lng: Double,
-    var type: String
+    var type: String,
+    var RSSI: Int
 ) {
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null

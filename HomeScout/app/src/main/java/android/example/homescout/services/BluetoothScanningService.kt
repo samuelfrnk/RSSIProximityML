@@ -191,13 +191,15 @@ class BluetoothScanningService : LifecycleService() {
                     val lat = it.latitude
                     val lng = it.longitude
                     val deviceType = DeviceTypeManager.identifyDeviceType(result).type
+                    val rssi = result.rssi
 
                     val bleDevice = BLEDevice(
                         mac,
                         timestampInMilliSeconds,
                         lat,
                         lng,
-                        deviceType)
+                        deviceType,
+                        rssi)
 
                     scanResults[mac] = bleDevice
                 }
