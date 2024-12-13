@@ -33,6 +33,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import ai.onnxruntime.*
+
+
 
 @AndroidEntryPoint
 class TrackerClassificationService : LifecycleService() {
@@ -45,6 +48,8 @@ class TrackerClassificationService : LifecycleService() {
     private var distance : Float? = null
     private var timeinMin : Float? = null
     private var occurrences : Float? = null
+    private lateinit var ortEnvironment: OrtEnvironment
+    private lateinit var ortSession: OrtSession
 
     @Inject
     lateinit var trackingPreferencesRepository: TrackingPreferencesRepository
@@ -60,6 +65,15 @@ class TrackerClassificationService : LifecycleService() {
 
         observeTrackingPreferences()
         createBleDeviceHashMapWithMacAsKeyOrderedDescByTime()
+
+        ortEnvironment = OrtEnvironment.getEnvironment()
+
+        val modelPath = "Classifier.ort"
+        val assetManager = assets
+        val modelInputStream = assetManager.open(modelPath)
+        val modelBytes = modelInputStream.readBytes()
+
+        ortSession = ortEnvironment.createSession(modelBytes)
 
 
     }
