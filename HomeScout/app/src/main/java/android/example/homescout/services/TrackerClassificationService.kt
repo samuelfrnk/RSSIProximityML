@@ -34,7 +34,8 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 import ai.onnxruntime.*
-
+import android.example.homescout.models.AirTag
+import java.util.Collections
 
 
 @AndroidEntryPoint
@@ -223,6 +224,35 @@ class TrackerClassificationService : LifecycleService() {
                     }
 
                     if (distanceFollowed < distance!!) { continue }
+
+
+                    //ML RSSI-Shielding
+
+                    if (scansOfThisDevice[0].type == AirTag().type && isRssiShield == true) {
+                        var closeTrackerCount = 0
+
+                        for (scan in scansOfThisDevice) {
+                            val inputData = floatArrayOf(
+                                scan.RSSI.toFloat(),
+                                if (isIndoor == true) 1f else 0f,
+                                if (isLos == true) 1f else 0f
+                            )
+                            val inputTensor = OnnxTensor.createTensor(ortEnvironment, arrayOf(inputData))
+                            val results = ortSession.run(Collections.singletonMap("input", inputTensor))
+                            val outputTensor = results[0].value as Array<FloatArray>
+
+                            val prediction = outputTensor[0][0]
+                            if (prediction == 1F) {
+                                closeTrackerCount++
+                            }
+
+                            inputTensor.close()
+                            results.close()
+                        }
+                        if (closeTrackerCount < occurrences!!) {
+                            continue
+                        }
+                    }
 
 
                     // FOUND A MALICIOUS TRACKER ACCORDING TO USER DEFINED PARAMETERS
