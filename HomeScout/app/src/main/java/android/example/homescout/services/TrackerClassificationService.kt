@@ -48,6 +48,10 @@ class TrackerClassificationService : LifecycleService() {
     private var distance : Float? = null
     private var timeinMin : Float? = null
     private var occurrences : Float? = null
+    private var isRssiShield: Boolean ?= null
+    private var isIndoor: Boolean ?= null
+    private var isLos: Boolean ?= null
+
     private lateinit var ortEnvironment: OrtEnvironment
     private lateinit var ortSession: OrtSession
 

@@ -17,6 +17,9 @@ class TrackingPreferencesRepository @Inject constructor(private val dataStore: D
         val DISTANCE = floatPreferencesKey("distance")
         val TIME_IN_MIN = floatPreferencesKey("time_in_min")
         val OCCURRENCES = floatPreferencesKey("occurrences")
+        val IS_RSSI_SHIELD = booleanPreferencesKey("is_rssi_shield_enabled")
+        val IS_LOS = booleanPreferencesKey("is_los_enabled")
+        val IS_INDOOR = booleanPreferencesKey("is_indoor")
     }
 
 
@@ -35,6 +38,20 @@ class TrackingPreferencesRepository @Inject constructor(private val dataStore: D
     val occurrences = dataStore.data.map { preferences ->
         preferences[PreferenceKeys.OCCURRENCES] ?: 4.0f
     }
+
+    val isRssiShieldEnabled = dataStore.data.map { preferences ->
+        preferences[PreferenceKeys.IS_RSSI_SHIELD] ?: false
+    }
+
+    val isLos = dataStore.data.map { preferences ->
+        preferences[PreferenceKeys.IS_LOS] ?: false
+    }
+
+    val isIndoor = dataStore.data.map { preferences ->
+        preferences[PreferenceKeys.IS_INDOOR] ?: false
+    }
+
+
 
     suspend fun updateIsTrackingEnabled(isTrackingEnabled: Boolean) {
         dataStore.edit { preferences ->
@@ -59,6 +76,22 @@ class TrackingPreferencesRepository @Inject constructor(private val dataStore: D
             preferences[PreferenceKeys.OCCURRENCES] = occurrences
         }
     }
+    suspend fun updateIsRssiShield(isRssiShield: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferenceKeys.IS_RSSI_SHIELD] = isRssiShield
+        }
+    }
 
+    suspend fun updateIsLos(isLos: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferenceKeys.IS_LOS] = isLos
+        }
+    }
+
+    suspend fun updateIsIndoor(isIndoor: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferenceKeys.IS_INDOOR] = isIndoor
+        }
+    }
 
 }

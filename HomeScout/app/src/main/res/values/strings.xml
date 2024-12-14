@@ -30,4 +30,8 @@
     <string name="subtext_switch_tracking_protection">Notifies about Bluetooth Low Energy trackers following you.</string>
     <string name="scan_button_stop">Stop</string>
     <string name="scan_button_scan">Scan</string>
+
+    <string name="description_rssi_shield">Enable RSSI Shield</string>
+    <string name="description_los">Enable Line of Sight (LOS)</string>
+    <string name="description_indoor">Enable Indoor Mode</string>
 </resources>

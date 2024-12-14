@@ -76,7 +76,21 @@ class SettingsFragment : Fragment() {
         bluetoothManager.adapter
     }
 
+    private fun setupRssiToggles() {
+        binding.switchRssiShield.setOnCheckedChangeListener { _, isChecked ->
+            settingsViewModel.updateIsRssiShield(isChecked)
+        }
 
+        binding.switchLos.setOnCheckedChangeListener { _, isChecked ->
+            settingsViewModel.updateIsLos(isChecked)
+        }
+
+        // Indoor Toggle
+        binding.switchIndoor.setOnCheckedChangeListener { _, isChecked ->
+            settingsViewModel.updateIsIndoor(isChecked)
+
+        }
+    }
     // LIFECYCLE FUNCTIONS
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -95,6 +109,7 @@ class SettingsFragment : Fragment() {
         observeTrackingPreferences()
         addOnSliderTouchListeners()
         setupButtonsForDifferentTrackingPreferences()
+        setupRssiToggles()
 
 
         return binding.root

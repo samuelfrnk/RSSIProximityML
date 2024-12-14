@@ -27,6 +27,32 @@ class SettingsViewModel @Inject constructor(
     val occurrences: LiveData<Float>
         get() = trackingPreferencesRepository.occurrences.asLiveData()
 
+    val isRssiShield: LiveData<Boolean>
+        get() = trackingPreferencesRepository.isRssiShieldEnabled.asLiveData()
+
+    val isLos: LiveData<Boolean>
+        get() = trackingPreferencesRepository.isLos.asLiveData()
+
+    val isIndoor: LiveData<Boolean>
+        get() = trackingPreferencesRepository.isIndoor.asLiveData()
+
+    fun updateIsRssiShield(value: Boolean) {
+        viewModelScope.launch {
+            trackingPreferencesRepository.updateIsRssiShield(value)
+        }
+    }
+
+    fun updateIsLos(value: Boolean) {
+        viewModelScope.launch {
+            trackingPreferencesRepository.updateIsLos(value)
+        }
+    }
+
+    fun updateIsIndoor(value: Boolean) {
+        viewModelScope.launch {
+            trackingPreferencesRepository.updateIsIndoor(value)
+        }
+    }
 
     fun onSwitchToggled(checked: Boolean) {
         viewModelScope.launch {
