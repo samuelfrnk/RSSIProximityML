@@ -35,6 +35,7 @@ import timber.log.Timber
 import javax.inject.Inject
 import ai.onnxruntime.*
 import android.example.homescout.models.AirTag
+import androidx.lifecycle.observe
 import java.util.Collections
 
 
@@ -117,6 +118,9 @@ class TrackerClassificationService : LifecycleService() {
         trackingPreferencesRepository.occurrences.asLiveData().observe(this) {
             occurrences = it
         }
+        trackingPreferencesRepository.isRssiShieldEnabled.asLiveData().observe(this){isRssiShield = it}
+        trackingPreferencesRepository.isLos.asLiveData().observe(this){isLos = it}
+        trackingPreferencesRepository.isIndoor.asLiveData().observe(this){isIndoor = it}
     }
 
     private fun createBleDeviceHashMapWithMacAsKeyOrderedDescByTime() {
@@ -225,36 +229,89 @@ class TrackerClassificationService : LifecycleService() {
 
                     if (distanceFollowed < distance!!) { continue }
 
+                    Timber.i("RSSI shield about to be reached.")
+                    Timber.i("Type: ${scansOfThisDevice[0].type}")
+                    Timber.i("isRSSI SHIELD: ${isRssiShield}")
+
+
 
                     //ML RSSI-Shielding
-
                     if (scansOfThisDevice[0].type == AirTag().type && isRssiShield == true) {
+                        Timber.i("Starting RSSI-Shielding for device of type AirTag. Number of scans: ${scansOfThisDevice.size}")
+                        Timber.i("Starting RSSI-Shielding for device of type AirTag. MAC Adress: ${scansOfThisDevice.first().macAddress}")
+
                         var closeTrackerCount = 0
 
-                        for (scan in scansOfThisDevice) {
-                            val inputData = floatArrayOf(
-                                scan.RSSI.toFloat(),
-                                if (isIndoor == true) 1f else 0f,
-                                if (isLos == true) 1f else 0f
-                            )
-                            val inputTensor = OnnxTensor.createTensor(ortEnvironment, arrayOf(inputData))
-                            val results = ortSession.run(Collections.singletonMap("input", inputTensor))
-                            val outputTensor = results[0].value as Array<FloatArray>
+                        for ((index, scan) in scansOfThisDevice.withIndex()) {
+                            try {
+                                // Log input preparation
+                                val inputData = floatArrayOf(
+                                    scan.RSSI.toFloat(),
+                                    if (isIndoor == true) 1f else 0f,
+                                    if (isLos == true) 1f else 0f
+                                )
+                                Timber.i(
+                                    "Processing scan $index for RSSI-Shielding. " +
+                                        "Input Data: RSSI=${inputData[0]}, isIndoor=${inputData[1]}, isLos=${inputData[2]}"
+                                )
+                                // Create input tensor and run inference
+                                val inputTensor = OnnxTensor.createTensor(ortEnvironment, arrayOf(inputData))
+                                val results = ortSession.run(Collections.singletonMap("input", inputTensor))
+                                Timber.i("Output type: ${results[0].value!!::class.java}")
+                                val outputTensor = results[0].value as LongArray
+                                val outputValue = results[0].value
+                                when (outputValue) {
+                                    is LongArray -> {
+                                        Timber.i("Output is a LongArray with size: ${outputValue.size}")
+                                        Timber.i("Output contents: ${outputValue.joinToString()}")
+                                    }
+                                    is Array<*> -> {
+                                        Timber.i("Output is an Array with size: ${outputValue.size}")
+                                        // If it’s an array of arrays, you can iterate further
+                                        if (outputValue.isNotEmpty() && outputValue[0] is LongArray) {
+                                            val longArray2D = outputValue as Array<LongArray>
+                                            Timber.i("Output is a 2D LongArray: ${longArray2D.size} rows")
+                                            for ((rowIndex, row) in longArray2D.withIndex()) {
+                                                Timber.i("Row $rowIndex: ${row.joinToString()}")
+                                            }
+                                        } else {
+                                            Timber.i("Array contents: ${outputValue.joinToString()}")
+                                        }
+                                    }
+                                    else -> {
+                                        Timber.i("Output is of another type: ${outputValue::class.java}. Value: $outputValue")
+                                    }
+                                }
+                                // Extract prediction and log the result
+                                val prediction = outputTensor[0]
+                                Timber.i("Prediction result for scan $index: $prediction")
 
-                            val prediction = outputTensor[0][0]
-                            if (prediction == 1F) {
-                                closeTrackerCount++
+                                // Increment close tracker count if prediction matches
+                                if (prediction == 1L) {
+                                    closeTrackerCount++
+                                    Timber.i("Scan $index classified as 'close tracker'. Current close tracker count: $closeTrackerCount")
+                                }
+
+                                // Cleanup resources
+                                inputTensor.close()
+                                results.close()
+
+                            } catch (e: Exception) {
+                                // Log any errors encountered during inference
+                                Timber.e("Error during RSSI-Shielding inference for scan $index: ${e.message}")
+                                Timber.i(e.stackTraceToString())
                             }
-
-                            inputTensor.close()
-                            results.close()
                         }
+
+                        // Log final close tracker count and decision
+                        Timber.i("RSSI-Shielding completed. Close tracker count: $closeTrackerCount (Threshold: $occurrences)")
                         if (closeTrackerCount < occurrences!!) {
+                            Timber.i("Device does not meet the close tracker threshold. Skipping.")
                             continue
+                        } else {
+                            Timber.i("Device passed the RSSI-Shielding criteria. Malicious tracker found.")
                         }
                     }
-
-
                     // FOUND A MALICIOUS TRACKER ACCORDING TO USER DEFINED PARAMETERS
                     val tracker = scansOfThisDevice.first()
 

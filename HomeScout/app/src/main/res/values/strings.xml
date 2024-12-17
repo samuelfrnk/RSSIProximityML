@@ -31,7 +31,7 @@
     <string name="scan_button_stop">Stop</string>
     <string name="scan_button_scan">Scan</string>
 
-    <string name="description_rssi_shield">Enable RSSI Shield</string>
+    <string name="description_rssi_shield">Enable RSSI AirTag Shield</string>
     <string name="description_los">LOS Model Input </string>
     <string name="description_indoor">Indoor Model Input </string>
 </resources>
