@@ -2,15 +2,23 @@
 
 ## Introduction
 
-This project is part of my bachelor thesis. The focus is on scanning BLE packets containing RSSI data emitted from AirTags with a [skript](ble_app_uart_adv_scan/main.c) compatible with a nRF52840 DK Board (pca10056). Further it also contains [RSSI Data](Experiments/Results/Data_CSV) and tools used for processing the data.
+This repository is part of my bachelor thesis. The work is dealing with BLE based Tracker which operate in a Crowded Source Finding Network (COFN). The technology is analysed using Apple's concrete implementation which is called AirTag in the Find My network. The focus is on security aspects and the misuse of technology for stalking purposes. 
 
-[This repository](https://github.com/jimmywong2003/nrf5-ble-scan-filter-example) has been used as a foundation for the nrf Application.
+It contains all the resources that were used to collect a labelled BLE RSSI dataset in various experiments. 
 
-### Main components 
+A combined dataset was then used in a second step to train and evaluate a classifier that classifies proximity based on the RSSI values together with the additional input features indoor and LOS. A version of the Decision Tree classifier achieved a performance score of 84%. This performance score balances accuracy, F1-score and a custom overfitting penalty 
 
-1. The folder [ble_app_uart_adv_scan](ble_app_uart_adv_scan) contains the source code including the main.c file. It can scan BLE packets, filters AirTags and logs the corresponding RSSI value together with the MAC-Adress.
-2. The folder [Experiments](Experiments) contains both data and tools used to gather the data.
-3. The folder [ML_Analysis](ML_Analysis) contains the ML models and their evaluation in the form of JupyterNoteBook files. 
+In a final step, the selected classifier was extracted from the training environment using ONNX and implemented in HomeScout, an Android protection application developed by the Communication Systems Group of the Institute of Informatics at the University of Zurich. 
+
+
+## Overview Components
+
+### **Data**  
+- Final labeled [CSV Dataset](Experiments/Results/Data_CSV/Combined_Data/combined_data.csv) which combines all Experiments and contains over 13'300 entries. 
+- [CSV Data](Experiments/Results/Data_CSV) from the individual data collection Experiments.
+- An [Application](ble_app_uart_adv_scan/main.c) used in an embedded environment together with a nRF52840 DK Board (pca10056) to scan, filter and log BLE packets emitted from AirTags.
+ [This repository](https://github.com/jimmywong2003/nrf5-ble-scan-filter-example) has been used as a foundation for the Application and was modified with an AirTag filter and other features.
+- Several [Python Scripts](Experiments/Evaluation/Conversion_Skripts) have been used to transform the raw log files into CSV structure within the Data pipeline. 
 
 ### Dataset
 
