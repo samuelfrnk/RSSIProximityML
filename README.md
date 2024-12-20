@@ -1,6 +1,6 @@
 # Bachelor Thesis Samuel Frank
 
-## Introduction
+## 1. Introduction
 
 This repository is part of my bachelor thesis. The work is dealing with BLE based Tracker which operate in a Crowded Source Finding Network (COFN). The technology is analysed using Apple's concrete implementation which is called AirTag in the Find My network. The focus is on security aspects and the misuse of technology for stalking purposes. 
 
@@ -11,7 +11,7 @@ A combined dataset was then used in a second step to train and evaluate a classi
 In a final step, the selected classifier was extracted from the training environment using ONNX and implemented in HomeScout, an Android protection application developed by the Communication Systems Group of the Institute of Informatics at the University of Zurich. 
 
 
-## Overview Components
+## 2. Overview Components
 
 ### **Data** 
 - Final labeled [CSV Dataset](Experiments/Results/Data_CSV/Combined_Data/combined_data.csv) which combines all Experiments and contains over 13'300 entries. 
@@ -28,7 +28,11 @@ In a final step, the selected classifier was extracted from the training environ
 
 - The adjusted [HomeScout Sourcode](HomeScout) including the introduced RSSI shielding classifier logic is also part of the repository. 
 
-### Experiments Data Collection
+## 3. Further Information 
+
+### **Data** 
+
+More information about the performed data experiments and their metadata : 
 
 | Experiment Nr. | Entries             | Data                                      | Metadata                                   | Distance (m)                        |
 |----------------|---------------------|-------------------------------------------|--------------------------------------------|-------------------------------------|
@@ -41,7 +45,6 @@ In a final step, the selected classifier was extracted from the training environ
 | 7              | 3422 RSSI values     | [Experiment_7.csv](Experiments/Results/Data_CSV/Experiment_7.csv) | [Metadata](Experiments/Results/Overview_Data/Experiment_7.csv)   | 0.0 - 2.0                         |
 
 
-
 Notes: 
 - Based on insights from Experiments 1 and 2, the methodology was adjusted, leading to more concise data collection in Experiment 3.
 - Experiment 4 was conducted to examine the influence of the battery life onto the RSSI values.
@@ -49,12 +52,32 @@ Notes:
 - Experiment 6 was conducted indoor and NLOS.  
 - Experiment 7 was conducted outdoor and NLOS.  
 
- 
+Data Pipeline : 
 
-### Experiments ML-Models 
-       
+
+![image](https://github.com/user-attachments/assets/5d9d7021-80a7-4aaf-9e24-c2a899927a1f)
+
+
+
+
+ ### **Classifier** 
+
+Perormance Score of the evaluated models: 
+
+![image](https://github.com/user-attachments/assets/e26fdd74-ea0a-4d73-9f5a-c668f994c836)
+
+
+### **HomeScout Integration** 
+
+Overview over the Architecture of HomeScout as well as Areas that needed modifications highlighted in red : 
+
+![image](https://github.com/user-attachments/assets/842d4769-e0ce-4244-9c95-7585b9f8f054)
+
+
+
 
 ### Requirement
+
 * nRF5 SDK 17.02
 * nRF52840 DK Board (pca10056)
 * Segger Embedded Studio 4.5 or later
