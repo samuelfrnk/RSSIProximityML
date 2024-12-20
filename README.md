@@ -13,16 +13,20 @@ In a final step, the selected classifier was extracted from the training environ
 
 ## Overview Components
 
-### **Data**  
+### **Data** 
 - Final labeled [CSV Dataset](Experiments/Results/Data_CSV/Combined_Data/combined_data.csv) which combines all Experiments and contains over 13'300 entries. 
 - [CSV Data](Experiments/Results/Data_CSV) from the individual data collection Experiments.
 - An [Application](ble_app_uart_adv_scan/main.c) used in an embedded environment together with a nRF52840 DK Board (pca10056) to scan, filter and log BLE packets emitted from AirTags.
  [This repository](https://github.com/jimmywong2003/nrf5-ble-scan-filter-example) has been used as a foundation for the Application and was modified with an AirTag filter and other features.
-- Several [Python Scripts](Experiments/Evaluation/Conversion_Skripts) have been used to transform the raw log files into CSV structure within the Data pipeline. 
+- Several [Python Scripts](Experiments/Evaluation/Conversion_Skripts) have been used to transform the raw log files into CSV structure within the Data pipeline.
 
-### Dataset
+### **Classifier**  
+- The final evaluation of the models including the performance scores is located in [this Jupyter Notebook](ML_Analysis/This_Work/Final_Evaluation/ML_Analysis_BA.ipynb). 
+- [Initial Training and Evaluation](ML_Analysis/Darios_Notebook/Experiment_3/ML_Analysis_Experiment3.ipynb) based on the [work by Dario](https://github.com/dariomonopoli-dev/Bachelor_thesis_code) with comparison to a [binary classification](ML_Analysis/Darios_Notebook/Experiment_3/Binary_Bins/ML_Analysis_Experiment3_BinaryBins_Smoothend.ipynb) modeling leading to initial iterative refinment to a binary classification. 
 
-The final Dataset used in the thesis can be found [here](Experiments/Results/Data_CSV/Combined_Data). 
+### Porting to HomeScout
+
+- The adjusted [HomeScout Sourcode](HomeScout) including the introduced RSSI shielding classifier logic is also part of the repository. 
 
 ### Experiments Data Collection
 
