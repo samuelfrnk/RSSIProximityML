@@ -15,7 +15,7 @@ In a final step, the selected classifier was extracted from the training environ
 
 ### **Data** 
 - Final labeled [CSV Dataset](Experiments/Results/Data_CSV/Combined_Data/combined_data.csv) which combines all Experiments and contains over 13'300 entries.
-  The corresponding sha256 hash of the final data set can be found [here](Experiments/Results/Data_CSV/Combined_Data/dataset_hash.txt). The script used to hash the dataset can be found [here](Experiments/Evaluation/Hash_Script/dataset_hash.py) for integrity checks. 
+  The corresponding sha256 hash of the final data set can be found [here](Experiments/Results/Data_CSV/Combined_Data/dataset_hash.txt). The script used to hash the dataset can be found [here](Experiments/Evaluation/Hash_Script/dataset_hash.py) for integrity check purposes. 
 - [CSV Data](Experiments/Results/Data_CSV) from the individual data collection Experiments.
 - An [Application](ble_app_uart_adv_scan/main.c) used in an embedded environment together with a nRF52840 DK Board (pca10056) to scan, filter and log BLE packets emitted from AirTags.
  [This repository](https://github.com/jimmywong2003/nrf5-ble-scan-filter-example) has been used as a foundation for the Application and was modified with an AirTag filter and other features.
