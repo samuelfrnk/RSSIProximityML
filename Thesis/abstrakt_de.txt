@@ -2,14 +2,15 @@ Bluetooth Low Energy (BLE) basierte Tracker sind schon eine Weile auf dem Markt.
 Durch deren Integration in sogenannte Crowd-Sourced Offline Finding Networks (COFN)
 haben sie grosse Vorteile im Bezug auf Erschwinglichkeit und Batterielaufzeit verglichen
 mit alternativen Trackern. Seit dem Branchenriesen wie Apple ihre Implementierung die-
-ser Technologie kommerzialisiert haben, hat dies zu einer andauernden Diskussion über
+ser Technologie kommerzialisiert haben, hat dies zu einer andauernden Diskussion ¨uber
 Sicherheitsaspekte und Technologiemissbrauch geführt. Diese Arbeit befasste sich mit der
 Thematik ob Received Signal Strength Indication (RSSI) Daten kombiniert mit einem
 Machine Learning (ML) Ansatz benutzt werden können um den Schutz von Opfern von
 solchem Missbrauch zu verbessern. Spezifisch wurden AirTags benutzt, um einen beschrif-
 teten Datensatz mit insgesamt 13’353 Einträgen zu sammeln. Dieser Datensatz wurde in
 einem nächsten Schritt verwendet, um verschiedene Klassifikationsmodelle zu trainieren,
-zu evaluieren und in HomeScout, eine Schutzapplikation entwickelt von der Communicati-
-on Systems Group der Universität Zürich, zu integrieren. Ein Decision Tree Klassifikator
-hat eine Leistungskennzahl (der die Genauigkeit, den F1-Score und eine Strafe für Overfit-
-ting berücksichtigt) von 84 % erreicht, und wurde erfolgreich in HomeScout implementiert.
+zu evaluieren und ein Modell in HomeScout, eine Schutzapplikation entwickelt von der
+Communication Systems Group der Universität Zürich, zu integrieren. Ein Decision Tree
+Klassifikator hat eine Leistungskennzahl (der die Genauigkeit, den F1-Score und eine Stra-
+fe für Overfitting berücksichtigt) von 84 % erreicht, und wurde erfolgreich in HomeScout
+implementiert.
