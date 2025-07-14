@@ -1,8 +1,8 @@
-# Bachelor Thesis Samuel Frank
+# RSSIProximityML
 
 ## 1. Introduction
 
-This repository is part of my bachelor thesis. The work is dealing with BLE based Tracker which operate in a Crowded Source Finding Network (COFN). The technology is analysed using Apple's concrete implementation which is called AirTag in the Find My network. The focus is on security aspects and the misuse of technology for stalking purposes. 
+This repository is part of the bachelor thesis completed in Computer Science at the University of Zurich (UZH), with the Communication Systems Group (CSG). The work is dealing with BLE based Tracker which operate in a Crowded Source Finding Network (COFN). The technology is analysed using Apple's concrete implementation which is called AirTag in the Find My network. The focus is on security aspects and the misuse of technology for stalking purposes. 
 
 It contains all the resources that were used to collect a labelled BLE RSSI dataset in various experiments. 
 
